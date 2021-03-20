@@ -112,14 +112,14 @@ Relational Operations의 결합
 ### Join Operation
 - 두 릴레이션에서의 모든 Cartesian-Product 수행결과 나온 tuple들 중 조건을 만족하는 tuple만 출력
 - Notation: 𝜎_𝜃(𝑟 × 𝑠) | r ⨝_𝜃 s
-    - ![Join Notation 1](./img/Join_Notation1.PNG)
-    - ![Join Notation 2](./img/Join_Notation2.PNG)
+    - ![Join Notation 1](./img/Join_Notation1.png)
+    - ![Join Notation 2](./img/Join_Notation2.png)
         - join은 상당히 자주 쓰여서 따로 기호를 만들었다.
-    - ![Join Notation 3](./img/Join_Notation3.PNG)
+    - ![Join Notation 3](./img/Join_Notation3.png)
     - 𝜃는 조건절
 - Example
-    - ![Join Example 1](./img/Join_Ex1.PNG)
-    - ![Join Example 2](./img/Join_Ex2.PNG)
+    - ![Join Example 1](./img/Join_Ex1.png)
+    - ![Join Example 2](./img/Join_Ex2.png)
 
 ### Union Operation
 - 합집합
@@ -128,9 +128,9 @@ Relational Operations의 결합
     1. 두 릴레이션 r, s가 속성의 개수가 같아야 한다.
     2. 두 릴레이션 r, s가 domain이 같아야 한다.
 - Notation: ∪
-    - ![Union Notation](./img/Union_Notation.PNG)
+    - ![Union Notation](./img/Union_Notation.png)
 - Example
-    - ![Union Example](./img/Union_Ex.PNG)
+    - ![Union Example](./img/Union_Ex.png)
 ### Set-Intersection Operation
 - 교집합
     - 두 릴레이션을 집합의 교집합 기능을 수행
@@ -138,9 +138,9 @@ Relational Operations의 결합
     1. 두 릴레이션 r, s가 속성의 개수가 같아야 한다.
     2. 두 릴레이션 r, s가 domain이 같아야 한다.
 - Notation: ⋂ 
-    - ![Set-Intersection Notation](./img/Set-Intersection_Notation.PNG)
+    - ![Set-Intersection Notation](./img/Set-Intersection_Notation.png)
 - Example
-    - ![Set-Intersection Example](./img/Set-Intersection_Ex.PNG)
+    - ![Set-Intersection Example](./img/Set-Intersection_Ex.png)
 ### Set Difference Operation
 - 차집합
     - 두 릴레이션을 집합의 차집합 기능을 수행
@@ -148,28 +148,28 @@ Relational Operations의 결합
     1. 두 릴레이션 r, s가 속성의 개수가 같아야 한다.
     2. 두 릴레이션 r, s가 domain이 같아야 한다.
 - Notation: −
-    - ![Set Difference Notation](./img/Set_Difference_Notation.PNG)
+    - ![Set Difference Notation](./img/Set_Difference_Notation.png)
 - Example
-    - ![Set Difference Example](./img/Set_Difference_Ex.PNG)
+    - ![Set Difference Example](./img/Set_Difference_Ex.png)
 ### The Assignment Operation
 - 할당 연산을 통해 임시적인 릴레이션 변수에 관계 대수를 쓸 수 있다.
     - 변수에 할당
 - Notation: ←
 - Example
-    - ![Assignment Example](./img/Assignment_Ex.PNG)
+    - ![Assignment Example](./img/Assignment_Ex.png)
 ### The Rename Operation
 - 이름 변경
 - Notation: ρ
-    - ![Rename Notation](./img/Rename_Notation.PNG)
+    - ![Rename Notation](./img/Rename_Notation.png)
     - 테이블 이름을 x라 하고 속성 이름을 A1,A2,...,An라 한다.
 ## Equivalent Queries
 똑같은 질의     
 관계 대수에서 하나 이상의 방법으로 질의를 할 수 있다.
 - Example1
-    - ![Equivalent_Queries_Ex1-1](./img/Equivalent_Queries_Ex1-1.PNG)
-    - ![Equivalent_Queries_Ex1-2](./img/Equivalent_Queries_Ex1-2.PNG)
+    - ![Equivalent_Queries_Ex1-1](./img/Equivalent_Queries_Ex1-1.png)
+    - ![Equivalent_Queries_Ex1-2](./img/Equivalent_Queries_Ex1-2.png)
 - Example2
-    - ![Equivalent_Queries_Ex2-1](./img/Equivalent_Queries_Ex2-1.PNG)
-    - ![Equivalent_Queries_Ex2-2](./img/Equivalent_Queries_Ex2-2.PNG)
+    - ![Equivalent_Queries_Ex2-1](./img/Equivalent_Queries_Ex2-1.png)
+    - ![Equivalent_Queries_Ex2-2](./img/Equivalent_Queries_Ex2-2.png)
 
 위 두 예제는 다른 질의이나 같은 결과를 도출한다.
