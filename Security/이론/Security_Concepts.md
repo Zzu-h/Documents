@@ -189,5 +189,5 @@ Ex
 - Human attack surface
 
 ## Attack Tree
-![Attack Tree](./img/Attack-Tree.PNG)
+![Attack Tree](./img/Attack-Tree.png)
  
