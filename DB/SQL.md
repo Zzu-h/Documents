@@ -126,18 +126,18 @@ where P
     - 중복을 제거하기 위해서 **`distinct`**를 사용한다.
 - from절 없이 attribute는 문자가 될 수 있다.
     - ex) `select '437'`
-        - ![select-literal-no-from](./img/select-literal-no-from.jpg)
+        - ![select-literal-no-from](./img/select-literal-no-from.JPG)
     - Oracle에서는 불가능하다.
 - as를 통해 별명을 지을 수 있다.
     - ex) `select '437' as FOO`
-        - ![select-literal-as](./img/select-literal-as.jpg)
+        - ![select-literal-as](./img/select-literal-as.JPG)
 - from절을 가지면서 attribute를 문자로 넣는다면,
     - 그 테이블의 튜플 수 만큼 해당 문자가 생긴다.
     - ex) `select '437' as FOO`
-        - ![select-literal-with-from](./img/select-literal-with-from.jpg)
+        - ![select-literal-with-from](./img/select-literal-with-from.JPG)
 - +,-,*,/와 같은 수학 연산 표현으로 질의가 가능하다.
     - `select ID, name, salary/12 from instructor`
-        - ![select-with-operation](./img/select-with-operation.jpg)
+        - ![select-with-operation](./img/select-with-operation.JPG)
     - as로 별칭도 가능
 
 
@@ -177,7 +177,7 @@ where P
     - Oracle에서는 as를 생략해야함
 
 ### Self Join Example
-![Self-Join-Example](./img/Self-Join-Example.jpg)
+![Self-Join-Example](./img/Self-Join-Example.JPG)
 
 ## String Operations
 
@@ -265,7 +265,7 @@ where P
 - sum: sum of values
 - count: number of values
 - Example) `select avg (salary) from instructor where dept_name= 'Comp. Sci.';`
-    - ![Aggregate-Functions-Examples](./img/Aggregate-Functions-Examples.jpg)
+    - ![Aggregate-Functions-Examples](./img/Aggregate-Functions-Examples.JPG)
 
 ### Group By
 위 함수들을 그룹화해서 함수를 실행
@@ -275,7 +275,7 @@ from instructor
 group by dept_name;
 ```
 
-![group-by](./img/group-by.jpg)
+![group-by](./img/group-by.JPG)
 
 그룹핑 후 만들어질 테이블에 Attribute가 있어야 한다.    
 위의 경우 ID가 select 안에 있다면 오류를 발생시킨다.
@@ -289,7 +289,7 @@ group by dept_name
 having avg (salary) >= 80000;
 ```
 
-![group-by-having](./img/group-by-having.jpg)
+![group-by-having](./img/group-by-having.JPG)
 
 ## Nested Subqueries
 SQL 안에 또 다른 SQL(subquery)이 들어올 수 있다.   
