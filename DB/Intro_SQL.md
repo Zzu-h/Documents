@@ -126,18 +126,18 @@ where P
     - 중복을 제거하기 위해서 **`distinct`**를 사용한다.
 - from절 없이 attribute는 문자가 될 수 있다.
     - ex) `select '437'`
-        - ![select-literal-no-from](./img/select-literal-no-from.jpg)
+        - ![select-literal-no-from](./img/select-literal-no-from.JPG)
     - Oracle에서는 불가능하다.
 - as를 통해 별명을 지을 수 있다.
     - ex) `select '437' as FOO`
-        - ![select-literal-as](./img/select-literal-as.jpg)
+        - ![select-literal-as](./img/select-literal-as.JPG)
 - from절을 가지면서 attribute를 문자로 넣는다면,
     - 그 테이블의 튜플 수 만큼 해당 문자가 생긴다.
     - ex) `select '437' as FOO`
-        - ![select-literal-with-from](./img/select-literal-with-from.jpg)
+        - ![select-literal-with-from](./img/select-literal-with-from.JPG)
 - +,-,*,/와 같은 수학 연산 표현으로 질의가 가능하다.
     - `select ID, name, salary/12 from instructor`
-        - ![select-with-operation](./img/select-with-operation.jpg)
+        - ![select-with-operation](./img/select-with-operation.JPG)
     - as로 별칭도 가능
 
 
@@ -177,7 +177,7 @@ where P
     - Oracle에서는 as를 생략해야함
 
 ### Self Join Example
-![Self-Join-Example](./img/Self-Join-Example.jpg)
+![Self-Join-Example](./img/Self-Join-Example.JPG)
 
 ## String Operations
 
@@ -265,7 +265,7 @@ where P
 - sum: sum of values
 - count: number of values
 - Example) `select avg (salary) from instructor where dept_name= 'Comp. Sci.';`
-    - ![Aggregate-Functions-Examples](./img/Aggregate-Functions-Examples.jpg)
+    - ![Aggregate-Functions-Examples](./img/Aggregate-Functions-Examples.JPG)
 
 ### Group By
 위 함수들을 그룹화해서 함수를 실행
@@ -275,7 +275,7 @@ from instructor
 group by dept_name;
 ```
 
-![group-by](./img/group-by.jpg)
+![group-by](./img/group-by.JPG)
 
 그룹핑 후 만들어질 테이블에 Attribute가 있어야 한다.    
 위의 경우 ID가 select 안에 있다면 오류를 발생시킨다.
@@ -289,7 +289,7 @@ group by dept_name
 having avg (salary) >= 80000;
 ```
 
-![group-by-having](./img/group-by-having.jpg)
+![group-by-having](./img/group-by-having.JPG)
 
 ## Nested Subqueries
 SQL 안에 또 다른 SQL(subquery)이 들어올 수 있다.   
@@ -416,3 +416,138 @@ where not exists ( (select course_id
 이는 학생이 'Biology' 학과 과목 중 수강한 과목을 제외했을 때, 더 이상 들을게 없는 학생의 학번과 이름을 출력    
 다시말해, 'Biology' 학과 과목을 모두 수강한 학생의 학번과 이름을 출력
 
+## Test for Absence of Duplicate Tuples
+`unique` 키워드를 사용해서 중복이 되는 Tuple이 존재하는지 확인할 수 있다.
+- `unique`: 공집합, 또는 1개 인 tuple만 true를 만든다.
+    ```sql
+    select T.course_id
+    from course as T
+    where unique ( select R.course_id
+                from section as R
+                where T.course_id= R.course_id
+                    and R.year = 2017);
+    ```
+
+# Subqueries
+## Subqueries in the From Clause
+SQL은 FROM절에서 서브 질의를 할 수 있다.
+```sql
+select dept_name, avg_salary
+from ( select dept_name, avg (salary) as avg_salary
+    from instructor
+    group by dept_name)
+where avg_salary > 42000;
+```
+위 처럼 having절 없이 표현 가능하다.     
+
+- having 절
+    ```sql
+    Select dept_name, avg (salary) as avg_salary
+    from instructor
+    group by dept_name
+    having avg (salary) > 42000;
+    ```
+
+## With 절
+With 절은 임시 Table을 생성한다.     
+아래와 같이 임시 테이블을 생성해서 이용하기 위함이다.
+```sql
+with max_budget (value) as 
+    (select max(budget)
+    from department)
+select department.name
+from department, max_budget
+where department.budget = max_budget.value;
+```
+이 질의는 다음과 같다.
+```sql
+select department.name
+from department, max_budget
+where department.budget = (select max(budget)
+from department);
+```
+
+### With 절을 이용한 복잡한 query
+```sql
+with dept _total (dept_name, value) as
+    (select dept_name, sum(salary)
+    from instructor
+    group by dept_name),
+dept_total_avg(value) as
+    (select avg(value)
+    from dept_total)
+select dept_name
+from dept_total, dept_total_avg
+where dept_total.value > dept_total_avg.value
+```
+- 이를 해석하면 다음과 같다.
+    - 각 부서별 교수들의 임금 전체 합의 테이블과 그 평균에 대한 테이블에 대해서
+    - 각 부서별 교수들의 임금 전체 합이 평균보다 높은 부서명을 출력한다.
+
+## Scalar Subquery
+상수 Subquery는 Select절에 있으며, 단 하나의 값만을 가진다.     
+Subquery가 두 개 이상의 값을 가지면 사용이 불가함
+- 각 부서의 이름과 교수 수를 출력하라
+```sql
+select dept_name, 
+    ( select count(*) 
+        from instructor 
+        where department.dept_name = instructor.dept_name)
+    as num_instructors
+from department;
+```
+
+## Modification of the Database
+- Deletetion
+    - `delete from R`
+        - R에 있는 모든 튜플을 삭제
+    - `delete from R where P`
+        - 조건 P를 만족하는 R에 있는 모든 튜플을 삭제
+    - `delete from R where P oper Subquery`
+        - ex) 임금이 평균 미만인 교수 출력
+        ```sql
+        delete from instructor
+        where salary < (select avg (salary) 
+            from instructor);
+        ```
+        - 예상되는 문제점
+            - 삭제하면서 평균 임금이 변동될 수 있다.
+        - SQL에서는 Subquery를 먼저 실행하고 삭제를 수행하기 때문에
+            - Subquery의 결과는 변하지 않는다.
+- Insertion
+    - `insert R(a1, a2, ..., an) values(v1, v2 ..., vn)`: basic form
+        - value들을 모든 속성에 대입한다면 Attribute는 생략해도 무관
+            - null값도 포함한다.
+    - Subquery를 통해서도 삽입이 가능하다.
+        ```sql
+        insert into instructor
+        select ID, name, dept_name, 18000
+        from student 
+        where dept_name = 'Music' and total_cred > 144;
+        ```
+        - 여기서도 속성에 유의해서 넣어준다.
+- Updating
+    - `update R set (update content)`
+        - R에 있는 내용 중 Update Content를 수행함
+        - ex) `update instructor set salary = salary * 1.05`
+            - 모든 salary를 5%를 더 추가
+    - `update R set (update content) where P`
+        - R에 있는 내용 중 P를 만족하는 튜플만 update content를 수행함
+        - P 안에 Subquery도 들어갈 수 있다.
+    - update 조건에 대해 다음과 같이 쓸 수 있다.
+        ```sql
+        update instructor
+            set salary = salary * 1.03
+            where salary > 100000;
+        update instructor
+            set salary = salary * 1.05
+            where salary <= 100000;
+        ```
+        - 하지만 여기서 순서를 주의해야 한다.
+        - 만일 위에서 순서가 바뀐다면, 의도치 않은 연산이 수행된다.
+            - ex) 99000일 경우 5% 추가 후 그 다음 3% 더 추가로 얻게 된다.
+        - 위와 같은 경우 case 문을 쓸 수 있다.
+    - `update R set (A = case when P1 then C1 else C2 end)`
+        - R 테이블에서 A의 값들을 수정하는데, P1을 만족할 경우 C1을 수행하고, 그렇지 않다면 C2를 수행한다.
+    - Update with Scalar Subqueries
+        - 단 하나의 속성의 값을 수정하기 때문에 여기서도 Scalar Subquery를 사용 가능하다.
