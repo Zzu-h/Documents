@@ -214,6 +214,28 @@
     - 보낼 데이터가 많지 않은 경우
     - 매우 높은 안정성
 
+## Rotor Machines
+- 타자기 자판을 치면 톱니 구조에 따라서 대체 문자를 출력해줌
+
+### Rotor Machines
+![Rotor-Machines](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/EnigmaMachineLabeled.jpg/800px-EnigmaMachineLabeled.jpg)
+### Rotor
+![Rotor](https://upload.wikimedia.org/wikipedia/commons/9/9f/Enigma_rotor_set.png)
+
+### Rotor를 폈을 때 구조
+![struct of Rotor](https://img.brainkart.com/extra/0sf78EM.jpg)
+- 위 그림에서 해당 위치에 전극에 따라서 키가 눌러졌을때 3번째 톱니를 지난 값이 출력이 된다.
+    - A의 경우 fast rotor 에서 24와 연결됨
+    - fast rotor 24out은 medium rotor 24와 연결되고, 24와 연결됨
+    - medium rotor 24out은 slow rotor 18와 연결되고, 18과 연결됨
+    - 따라서, B가 출력됨
+- 그리고 1회 눌려졌을 때마다 fast rotor가 회전함
+- fast rotor가 26회 회전하였을 때 medium,
+- medium rotor가 26회 회전하였을 때 slow rotor가 회전함
+- 이런 방식으로 회마다 출력이 바뀜
+- 따라서, **바퀴의 형태만 숨기면** 튼튼한 보안이 된다.
+
+
 # Transposition cipher
 - 전치 암호
     - 글자를 변환시키는 것이 아닌, 순서를 바꿈
@@ -230,3 +252,38 @@
 3. 그 후 다시 행으로 새롭게 작성한 문장이 암호문이다.
     - ex) "meet me after the toga party"를 암호화하면
         - "MEMATRHTGPRYETEFETEOAAT"이다.
+
+## Row Transposition Cipher
+- 더 복잡한 전치 암호이다.
+- 메시지를 행으로 쓰고 열로 읽는다.
+- 이러한 방식을 Multiple "rounds"를 수행해서 더 안전하게 만든다.
+
+### How to encrypt using Row Transposition Cipher
+1. key가 될 1부터 n까지의 배열을 제공
+    - ex) 4 3 1 2 5 6 7 이라 하자.
+2. 메시지를 n 글자에 맞추어 행으로 적는다.
+    - 빈 공간은 의미없는 문자로 채워 넣는다.
+    - ex) 문장이 "attack postponed until two am"일 때
+        - ![Example-Row-Transposition-Cipher](./img/Example-Row-Transposition-Cipher.JPG)
+3. 그리고 배열 숫자에 맞게 열로 읽어 내려간다.
+    - ex) 1번은 ttna, 2번은 aptm, 3번은 tsuo ...
+4. 이를 조합하면 암호문이다.
+    - ex) TTNA APTM TSUO AODW COIX KNLY PETZ
+
+# Steganography <-> Encription
+스테가노그래피는 암호화가 아니다.
+- 내용을 숨기는 것
+    - 특정 키를 이용하여 문장을 바꾸는 것이 아니라
+    - 원본 내용 그대로 알게 모르게 데이터를 숨기고 전송함
+- Steganography 기술들
+    - Character marking
+    - Invisible ink
+    - Pin punctures
+    - Typewriter correction ribbon
+- Steganography 장점
+    - 메시지가 존재함에도 메시지 전송을 숨긴다.
+        - 일반 메시지로 착각하게끔하여 진짜 메시지를 숨김
+    - 즉, traffic analisys를 회피하게 됨 
+- Steganography 단점
+    - 내용을 숨기기 위한 부가가치 즉 오버헤드가 크다.
+    - 또한 내용을 숨기는 규칙 system이 발각되면 바로 깨진다.
