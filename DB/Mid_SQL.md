@@ -74,9 +74,9 @@ from (student natural join takes) join course using (course_id)
     - full outer join
 - Table Example
     - Relation course
-        - ![Relation-course](./img/Relation-course.JPG)
+        - ![Relation-course](./img/Relation-course.jpg)
     - Relation prereq
-        - ![Relation-prereq](./img/Relation-prereq.JPG)
+        - ![Relation-prereq](./img/Relation-prereq.jpg)
 
 ### Left Outer Join
 ```sql
@@ -87,7 +87,7 @@ FROM R1 LEFT OUTER JOIN R2 ON P;
 - In relational algebra
     - course ⟕ prereq
 - Example
-    - ![Relation-Left-Outer-Join](./img/Relation-Left-Outer-Join.JPG)
+    - ![Relation-Left-Outer-Join](./img/Relation-Left-Outer-Join.jpg)
 
 ### Right Outer Join
 ```sql
@@ -98,7 +98,7 @@ FROM R1 RIGHT OUTER JOIN R2 ON P;
 - In relational algebra
     - course ⟖ prereq
 - Example
-    - ![Relation-Right-Outer-Join](./img/Relation-Right-Outer-Join.JPG)
+    - ![Relation-Right-Outer-Join](./img/Relation-Right-Outer-Join.jpg)
 ### Full Outer Join
 ```sql
 FROM R1 FULL OUTER JOIN R2 ON P;
@@ -108,7 +108,7 @@ FROM R1 FULL OUTER JOIN R2 ON P;
 - In relational algebra
     - course ⟗ prereq
 - Example
-    - ![Relation-Full-Outer-Join](./img/Relation-Full-Outer-Join.JPG)
+    - ![Relation-Full-Outer-Join](./img/Relation-Full-Outer-Join.jpg)
 
 # View
 - 기존 테이블의 필요한 데이터만 추출하여 가상의 테이블을 만드는 것
