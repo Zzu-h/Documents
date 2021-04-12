@@ -248,3 +248,111 @@ A프로그램에서 CPU가 입력을 지시하고 CPU는 다른 프로그램을 
 
 # Computer Systems Architecture
 - 대부분의 시스템은 Single General-Purpose Proccessor를 사용한다.
+    - ex) Intel CPU
+    - special-purpose processors도 있다.
+        - ex) GPU
+- 점점  Multiprocessors systems 사용이 증가하고 있다.
+    - 이는 parallel systems이라고 부른다.
+    - 장점
+        - 처리량 증가
+        - scale의 경제성
+        - 향상된 신뢰성
+
+## Multiprocessors systems 장점
+- Increased throughput
+    - 성능상 향상되기는 하지만,
+    - 코어가 N개 늘어나더라도 성능이 N배 증가하지는 않는다.
+- Economy of scale
+    - 프로세서가 주변 장치, 스토리지 및 메모리를 공유할 수 있음
+- Increased reliability
+    - 코어가 하나 고장나더라도 User는 인식못하고 그대로 사용 가능
+
+## Multi-Processor systme 종류
+CPU가 해야되는 일을 기준
+- Asymmetric multiprocessing
+    - 여러 개의 프로세서가 존재하지만 Master Processor가 존재한다.
+    - Master Processor가 전체 시스템을 관리
+    - 나머지 프로세서들은 Master가 시키는 일을 수행한다.
+- symmetric multiprocessing
+    - 모든 프로세서가 동등한 위치에서 각자 맡은 일을 한다.
+
+Memory Access 기준으로
+- Uniform memory access(UMA)
+    - 어떤 CPU든지 메모리에 access할 때는 같은 시간을 가진다.
+- Non-uniform memory access(NUMA)
+    - UMA가 아닌 경우
+
+## Multi-core systems
+한 개의 칩 안에 여러 개의 코어가 동일하게 들어있는 경우
+
+## Clustered Systems
+multiprocessor systems이긴 하지만, 일을 따로 하며 데이터만 필요에 따라 공유한다.    
+기본 목표: 시스템 상에 오류가 발생하더라도 System이 거기에 대응할 수 있도록 한다.
+- Asymmetric clustering
+- symmetric clustering
+- high-performance computing (HPC)
+    - 동시의 여러개 프로세스를 빠른 속도로 처리하기 위해서 만든 것
+
+# Operating systems structure
+기본적으로 OS는 Multiprogramming을 지원한다.
+- Multiprogramming: 동시에 여러개의 프로그램들을 실행 가능하게 만드는 것
+- 목적
+    - CPU와 I/O 장치들을 최대한 바쁘게 굴리기 위함
+- 방법
+    - Multiprogramming은 여러 개의 job들을 CPU가 그 중 하나를 실행하게 하는 것
+        - jop: program
+            - 구성 요소: code and data
+    - 여러 개의 job들 중에서 수행해야 할 job들 일부를 Main Memory에 넣어 두고
+        - 지금 당장 CPU처리를 해야할 job들을 job scheduling을 해서 CPU를 사용할 수 있도록 한다.
+- Multiprogramming을 하게 되면 Timeshared system이다.
+    - CPU가 작동할 때 시간이 지남에 따라 CPU time이 정의가 된다.
+        - CPU time: Resource의 일종
+    - CPU time을 공유해서 사용한다.
+- Multitaskint
+    - Multiprogramming의 확장판
+    - 마치 여러 개의 프로그램이 동시에 실행 되는 것처럼 보이게 하는 것
+
+## Concepts
+- CPU scheduling
+    - 여러 개의 job들이 ready가 되어 있다가 동시에 run이 되게 할 수있도록
+    - CPU를 그 중 일부에게만 할당한다.
+    - 즉, CPU를 누가 먼저 사용하는가를 따짐
+- Job scheduling
+    - Main Memory에 누가 먼저 올라가는가를 따짐
+- 프로세스가 메모리에 비해 너무 크다면, 일부 영역만 메모리에 남김,
+    - 그리고 나머지는 disk에 저장한다.
+    - swapping
+        - 필요하지 않은 부분을 내보내고, 꼭 수행해야 하는 부분만 Main Memory로 가져온는 것
+- Virtual Memory
+    - 실제 MainMemory에 있는 것 보다 훨씬 더 크게 사용할 수 있도록 한다.
+    - 당장 사용해야 할 부분만 Main Memory에 올리고 나머지는 virtual memory에 넣어 둔다.
+- Program
+    - 그저 코드, 실행되지 않은 상태
+- Process
+    - 실행 중이거나 실행 준비가 끝난 Program
+    - Program -> Process
+- Job
+    - 어찌 되었든 실행 되어야 할 일
+
+## Operating system operation
+OS는 기본적으로 interrupt 기반으로 해서 서비스를 한다.    
+- Interrupt는 HW에 의해 발생한다.
+- Softeware 에러 또는 request는 exception 또는 trap을 만든다.
+    - 사용자가 발생시킬 수 있는 것
+
+### OS는 dual-mode operation을 지원한다.
+- 분류
+    - User mode
+    - Kernel mode
+        - (= supervisor mode or privileged mode)
+- 기본적으로 HW에서 지원이 되어주어야 한다.
+- OS는 현재 User mode / Kernel mode 를 확인하면서 일들을 처리한다.
+    - User mode 일 경우 제약조건이 많다.
+    - Kernel mode는 그런 제약이 없이 Computing 할 수 있도록 기능을 제공함
+- Privileged instruction
+    - Kernel mode에서만 지원되는 명령어들
+    - Example
+        - I/O control에 대한 명령어
+        - interrupt에 대한 명령어
+        - switch to user mode에 대한 명령어
+- 
