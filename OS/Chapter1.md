@@ -39,7 +39,7 @@ OS는 Resource Manager이다.
 Computer System을 관리하는 것이므로 이를 간단히 보면,
 - Personal computers
 - Large-scale Systems
-- Hand-hedl Systems
+- Hand-held Systems
 - etc..
 
 # Computer Structure
