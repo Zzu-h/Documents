@@ -56,6 +56,70 @@ public static void JDBCexample(String dbid, String userid, String passwd) {
     - rset으로 getString은 속성의 순서를 써도 가능하고 속성의 이름을 써도 가능하다.
 
 ## Prepared Statement
+- java String 연결 '+'을 이용해서 쿼리 문장을 만드는 것은 바람직하지 않다.
+    - SQL Injection 때문
+- 따라서, PreparedStatement 객체를 생성해서 이 객체를 통해 쿼리문을 완성시킨다.
+    - `PreparedStatement pStmt = conn.prepareStatement("insert into instructor values(?,?,?,?)");`
+    - 이것이 기본적인 문장인데 ?에 값을 넣는다.
+    - 이 때 첫번째부터 마지막까지 1~4의 숫자가 할당된다.
+        - 즉 첫번째 value는 1번으로 지정해서 데이터를 삽입
+        - `pStmt.setString(1, "88877");`
+    - 그 후 excuteUpdate를 통해 쿼리를 처리한다.
+        - `pStmt.executeUpdate();`
+
+## Metadata Features
+테이블에 대한 질의를 처리할 때 테이블의 정보를 모를 수 있다.     
+이때 Metadata를 받아오는 함수를 이용하여 정보를 받아온다.
+- getMetaData()
+    - `ResultSetMetaData rsmd = rs.getMetaData();`
+- Table의 속성을 모를 때
+    - `rsmd.getColumnName(i)`
+    - `rsmd.getColumnTypeName(i)`
+- Table의 PrimarKey를 모를 때
+    ```java
+    DatabaseMetaData dmd = connection.getMetaData();
+    ResultSet rs = dmd.getPrimaryKeys(“”, “”, tableName);
+    (rs.getString(“KEY_SEQ”)
+    ```
+- Table의 이름을 모를 때
+    - `ResultSet rs = dmd.getTables (“”, "", “%", new String[] {“TABLES”});`
+    - `rs.getString(“TABLE_NAME“)`
+
+## Transaction Control in JDBC
+기본적으로 SQL 문은 자동적으로 commit이 된다.    
+- tuple들을 insert문을 execute를 하면 자동적으로 실행이 된다.
+- update 중에 잘못된 값이 있다면 이는 수정이 불가하다.
+
+이를 수동으로 바꿀 수 있다.
+- `conn.setAutoCommit(false);`
+- 이를 통해 전체를 다 입력받은 후 commit하여 질의를 처리할 수 있다.
+- `conn.commit();`
+    - 처리를 완료하는 것
+- `conn.rollback();`
+    - 질의 처리 중 잘못된 값이 들어갔을 경우 이전에 데이터로 되돌아 갈 수 있다.
+
+## SQL function call
+function call도 가능
+```java
+CallableStatement cStmt1 = conn.prepareCall("{? = call some 
+function(?)}");
+CallableStatement cStmt2 = conn.prepareCall("{call some 
+procedure(?,?)}");
+```
+
+## Large object in JDBC
+Photo, video 등과 같은 큰 객체들에 대한 함수이다.
+- getBlob()/getClob()
+    - 데이터들을 받아온다.
+- setBlob()/setClob()
+    - blob.setBlob(int parameterIndex, InputStream inputStream)
+    - clob.setClob(int parameterIndex, InputStream inputStream)
+
+## SQLJ
+java 내장 SQL이며, PL/SQL과 유사하다.    
+`#sql iterator deptInfoIter(String dept_name, int avgSal);`    
+- 이는 PL/SQL에서 Cursor의 역할을 한다.
+- 나머지 PL/SQL참고
 
 # Embedded SQL
 - 호스트 프로그램이 SQL문을 직접 포함하고 있는 프로그램
