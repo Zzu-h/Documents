@@ -1,6 +1,9 @@
 # Accessing SQL From a Programming Language
 SQL + Programming Language    
 SQL만 단독으로 사용하기 어렵다.      
+- SQL만으로 모든 표현을 할 수 없다.
+- 출력이나 사용자 입력 등 action들을 수행할 수 없다.
+
 따라서, 프로그래밍 언어와 합쳐서 SQL를 사용한다.     
 
 <br>
@@ -15,6 +18,44 @@ SQL만 단독으로 사용하기 어렵다.
             - C에서 사용하는 API
 - Embedded SQL
     - SQL이 내장됨
+
+
+# JDBC
+- JDBC는 JAVA API 이다.
+- metadata도 가져올 수 있다.
+- Database 연동 model
+    1. connection open
+    2. statement 객체 생성
+    3. 쿼리 실행하고 결과를 fetch한다.
+    4. 에러 처리
+## JDBC code
+```java
+public static void JDBCexample(String dbid, String userid, String passwd) { 
+    try (Connection conn = DriverManager.getConnection( 
+        "jdbc:oracle:thin:@db.yale.edu:2000:univdb", userid, passwd); 
+        Statement stmt = conn.createStatement();
+        ){ 
+        stmt.executeUpdate("insert into instructor values('77987', 'Kim',  'Physics', 98000)");
+        ResultSet rset = stmt.executeQuery("select dept_name, avg (salary) from instructor group by dept_name");
+    }
+    catch (SQLException sqle) { 
+        System.out.println("SQLException : " + sqle);
+    }
+}
+```
+- try(~)
+    - ~: connection open처리이다.
+- catch(~)
+    - ~: 에러처리
+- stmt.executeUpdate
+    - 질의 처리
+- stmt.executeQuery
+    - 질의 결과 fetch
+- ResultSet rset
+    - 질의 결과가 가져왔을 때 cursor의 역할을 한다.
+    - rset으로 getString은 속성의 순서를 써도 가능하고 속성의 이름을 써도 가능하다.
+
+## Prepared Statement
 
 # Embedded SQL
 - 호스트 프로그램이 SQL문을 직접 포함하고 있는 프로그램

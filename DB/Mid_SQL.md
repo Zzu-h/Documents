@@ -307,3 +307,169 @@ check(P) P의 조건을 만족하는 경우에만 삽입이 가능하다.
             - 삭제 될 때 해당 튜플이 삭제되는 것이 아니라 해당 속성의 값이 null로 바뀜
         - set default
             - 설정해두었던 default값으로 값이 바뀜
+
+### 무결성 제약조건을 위반 시 대처
+```sql
+create table person (
+    ID char(10),
+    name char(40),
+    mother char(10),
+    father char(10),
+    primary key ID,
+    foreign key father references person,
+    foreign key mother references person)
+```
+위 테이블의 경우 mother와 father가 자신의 테이블을 참조하고 있다.    
+제약조건 충돌 없이 tuple을 삽입하기 위해서는 다음의 과정 중 하나를 통해서 삽입을 수행한다.
+- Person 테이블에 부모 튜플을 먼저 삽입하고 그것을 참조하여 삽입한다.
+- father와 mother를 처음에 null로 하고, 후에 모든 값을 수정한다.
+    - 이때 father와 mother는 not null이어야 한다.
+- 제약조건 checking을 연기한다.
+
+## Check 조건
+Check를 통해 삽입을 제한할 수 있다.     
+- `check A in subquery`
+- Example
+    - `check (time_slot_id in (select time_slot_id from time_slot))`
+
+
+### Assertion
+하나의 속성에 대한 조건이 아니라 데이터베이스 전체에 거는 조건이다.    
+즉, 데이터베이스가 항상 만족해야하는 조건     
+`create assertion <assertion-name> check (<predicate>);`
+
+## Built-in Data Types in SQL
+- date: 년, 월, 일을 포함하는 날짜 데이터 타입
+    - 일, 월, 년 처럼 순서는 자유이다.
+    - Example: `date '2005-7-27'`
+- time: 초, 분, 시를 표현하는 시간 데이터 타입
+    - Example 
+        - `time '09:00:30'`
+        - `time '09:00:30.75'`
+- timestamp: 날짜와 시간을 합친 데이터 타입
+    - Example: `timestamp '2005-7-27 09:00:30.75'`
+- interval: 시간을 저장하는 데이터 타입
+    - 타이머처럼 일정량의 시간을 저장
+    - date, time, timestamp와 더하고 빼기가 될 수 있다.
+    - Example: interval '1' day
+
+## Large-Object Types
+큰 object를 저장하는 데이터 타입    
+e.g. photos, videos, CAD files, etc
+
+- 큰 object들은 Disk에 따로 저장되고 테이블에서는 Pointer를 저장한다.
+- type
+    - blob
+        - binary large object
+        - 8bit
+    - clob
+        - character large object
+        - text, ASCII코드 등 7bit 국제언어
+
+## User-Defined Types
+사용자가 임의로 Type을 정의할 수 있다.
+- Example
+    - `create type Dollars as numeric (12,2) final`
+    ```sql
+    create table department
+    (dept_name varchar (20),
+    building varchar (15),
+    budget Dollars);
+    ```
+    - final: 더이상 이를 이용한 재정의는 허가하지 않음
+        - 재정의를 subtype이라 한다.
+
+
+## Domains
+Type 정의하는 것과 유사하다.    
+하지만 Domain은 제약조건을 가질 수 있다.
+- Example
+    ```sql
+    create domain degree_level varchar(10)
+        constraint degree_level_test
+            check (value in ('Bachelors', 'Masters', 'Doctorate'));
+    ```
+
+## Index Creation
+- 테이블의 컬럼을 인덱스화 한다.
+- 이를 이용하여 검색의 성능을 향상시킨다.
+- 이는 Tree구조를 가지며 log(n)의 시간복잡도를 가진다.
+- 하지만 삽입과 삭제 수정이 많은 테이블에서는 오히려 성능이 떨어진다.
+    - 한번 인덱스를 설정한 컬럼에 대해 다시 저체의 인덱스를 다시 설정해야하기 때문
+- Form
+    - `create index <name> on <relation-name> (attribute);`
+- Tuning: Index를 만들어 두는 것
+
+## Authorization
+권한
+<br>
+
+- Tuple에 대한 privilege
+    - Read
+    - Insert
+    - Update
+    - Delete    
+    - 이는 테이블 또는 뷰같은 DB의 일부 기능에 대한 권한을 부여한다.
+        - Table의 Data영역에 접근
+- DB구조에 대한 권한
+    - Index
+    - Resources
+    - Alteration
+    - Drop
+    - DB의 구조에 대한 권한을 준다.
+        - Table의 MetaData영역에 접근
+
+### grant Authorization
+권한 부여 하기
+- Form
+    - `grant <privilege list> on <relation or view > to <user list>`
+    - `<user list>`에 들어갈 수 있는 요소
+        - user id
+        - public
+            - 모든 user들에게 권한을 부여한다.
+        - [role](##Roles)
+    - `<privilege list>`에 들어갈 수 있는 요소
+        - select - Read
+        - inesrt - Insert
+        - update - Update
+        - delete - Delete 
+        - all privileges - above all
+- Example
+    - `grant select on department to Amit, Satoshi`
+    - Amit, Satoshi한테 department 테이블에 대해서 select 권한을 부여함
+- option
+    - `with grant option`
+        - 부여받은 권한을 다른 User에게 부여할 수 있음
+        - Example
+            - `grant select on department to Amit with grant option;`
+- 외래키 생성을 위한 참조 권한도 부여할 수 있다.
+    - `grant reference (dept_name) on department to Mariano;`
+    - 왜 필요한가?
+        - 다른 테이블에서 작업을 할 때 참조한 테이블에 영향을 끼치는 것을 방지하기 위해서
+
+### Revoking Authorization
+권한 삭제하기
+- Form
+    - `revoke <privilege list> on <relation or view> from <user list>`
+    - `<privilege list>`에 all이 들어가면 모든 권한을 뺏는 것을 의미함
+    - `<user list>`에 public이 ㄷ르어가면 모든 사용자에게서 해당 권한을 뺏는 것을 의미함
+- 기본적으로 권한을 부여받은 user는 부여해준 user가 권한이 박탈되면 같이 박탈된다.
+- option
+    - `cascade`
+        - 권한 제거할 User가 부여했던 다른 User들까지 같이 권한을 제거한다.
+        - Example
+            - `revoke select on department from Amit, Satoshi cascade;`
+    - `restrict`
+        - 이 User의 권한이 제거가 되더라도 다른 User는 영향을 끼치지 않는다.
+        - Example
+            - `revoke select on department from Amit, Satoshi restrict;`
+
+## Roles
+Role은 집단의 개념으로 하나의 사용자가 그 집단에 소속되어 있다면 그 집단이 부여받은 권한을 가질 수 있게 된다.     
+그리고 그 사용자가 다른 집단으로 넘어가게 된다면 이전 집단의 권한은 block이 되고, 새 집단의 권한을 사용한다.
+- Form
+    - create
+        - `create a role <name>`
+    - grant
+        - `grant <role> to <users>`
+- users에 role이 들어갈 수 있다.
