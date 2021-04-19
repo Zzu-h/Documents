@@ -110,7 +110,7 @@ I/O Devices와 CPU가 동시에 실행될 수 있다.
 ### DMA Operation
 ![DMA-Operation](./img/DMA-Operation.JPG)
 
-Disk에 Data를 Memory에 올릴 때
+Disk의 Data를 Memory에 올릴 때
 1. CPU가 **Disk Controller**에게 DMA operation을 날린다.
     - 이 명령은 Disk Controller를 조종한다.
     - Memory 어떤 주소에 Disk가 가지고 있는 정보를 보내라고 명령
@@ -132,7 +132,7 @@ Interrupt는 *interrupt service routine*(OS가 가진 프로그램 코드)를 �
         - interrupt 번호에 따라 적합한 코드를 실행
     - Service Routine의 시작주소를 포함하고 해당 번호에 따라 적합한 코드를 인덱싱으로 바로 접근하여 실행할 수 있도록 관리
 -  Interrupt architecture
-    - Interrupt읠 정해진 구조
+    - Interrupt의 정해진 구조
 - 물리적인 통로를 통해 주변장치들이 Interrupt를 걸기도 하지만 Software에서 Interrupt를 발생할 수 있다.
     - 이를 software-generated interrupt라고 한다.
     - Trap
@@ -308,7 +308,7 @@ multiprocessor systems이긴 하지만, 일을 따로 하며 데이터만 필요
     - CPU가 작동할 때 시간이 지남에 따라 CPU time이 정의가 된다.
         - CPU time: Resource의 일종
     - CPU time을 공유해서 사용한다.
-- Multitaskint
+- Multitasking
     - Multiprogramming의 확장판
     - 마치 여러 개의 프로그램이 동시에 실행 되는 것처럼 보이게 하는 것
 
@@ -355,4 +355,3 @@ OS는 기본적으로 interrupt 기반으로 해서 서비스를 한다.
         - I/O control에 대한 명령어
         - interrupt에 대한 명령어
         - switch to user mode에 대한 명령어
-- 

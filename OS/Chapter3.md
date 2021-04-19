@@ -84,7 +84,7 @@ job = task - User가 만든 Process와 내부적으로 돌아가는 서비스들
 - I/O status information
 
 ![PCB-Executio-Process](./img/PCB-Executio-Process.JPG)
-- P0 -> P1 -> P2
+- P0 -> P1 -> P0
     - 위 과정을 Context switching이라 한다.
         - running 중인 프로세스를 중단하고 다른 프로세스로 넘어가는 과정
 
@@ -153,7 +153,7 @@ job = task - User가 만든 Process와 내부적으로 돌아가는 서비스들
 - CPU가 처리하고 있던 프로세스를 다른 프로세스로 바꾸는 행위
     - 현재 실행 중이던 프로세스의 마지막 상태를 어딘가에 저장 후 다른 프로세스로 변환
 - Context Switch는 큰 Overhead를 가지고 있다.
-    - system입장에서 이는 닥히 유용하지 않다.
+    - system입장에서 이는 딱히 유용하지 않다.
     - 따라서, Overhead를 줄일 수 있는 mechanism을 제공
         -  SUN UltraSPARC
             - Multiple sets of registers

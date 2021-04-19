@@ -241,7 +241,7 @@ Multi-Thread인 경우 어떤 Thread에 적용이 되어야 하는가
 - Signal마다 어떤 Thread에 전달할건지 구체적으로 알려줌
 - Example
     - Division by zero 1. 
-    - <control><c> 2.
+    - `<control><c>` 2.
     - POSIX API
         - `pthread_kill (pthread_t tid, int signal)`
         - pthread id를 같이 알려줌
