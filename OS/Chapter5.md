@@ -249,3 +249,97 @@ Multilevel Queue: Ready queue를 여러 queue로 나누어서 관리하는 queue
     - 각 queue의 scheduling algorithms
     - 어떤 경우에 process priority가 올라가는지, 내려가는지 결정하는 기준 방식
     - 실제로 queue를 옮겨갈 수 있는 mechanism
+
+# Multiple-Processor Scheduling
+기본적으로 CPU가 여러 개이다.     
+이를 분류하면
+- Symmetric Multiprocessing (SMP)
+    - 똑같은 CPU가 여러개이다.
+    - 모든 CPU가 우선순위 없이 스케줄링할 때 자체적으로 CPU사용을 결정함
+    - 조금 더 복잡
+- Asymmetric multiprocessing
+    - CPU가 여러개 존재하지만 자격이 같지가 않음
+    - Master가 존재하며 이것이 CPU를 관리한다.
+## Issue
+- Load balancing
+    - 일을 골고루 나누어서 모든 CPU가 최대한 바쁘게 만드는 것
+    - Push migration
+        - 놀고 있는 CPU가 존재하면 그 CPU에 할당
+        1. 주기적으로 노는 CPU가 있는지 확인한다.
+        2. Load balance가 깨지면 재할당
+    - Pull migration
+        - 놀고 있는 CPU가 자기가 직접 일을 가져옴
+- Process affinity
+    - 프로세스에 따라 선호하는 CPU가 달라지게 된다.
+        - 그에 따라 CPU를 할당하는 것이 다르게 됨
+    - 각각의 프로세스별로 자기한테 유리한 CPU가 할당 되도록 하는 것
+    - Cloud Computing에서도 중요하게 보임
+
+## Affinity를 고려하여 Scheduling
+- Soft affinity
+    - OS가 affinity를 가지고 스케줄링을 할 때 되도록 affinity를 고려하지만,
+    - 100% 보장을 하지 못한다.
+- Hard Affinity
+    - System call을 이용해서 다른 CPU로 넘어가지 않도록
+    - 무조건 특정 Process는 특정 CPU에만 할당되도록 하는 것
+
+## Thread Scheduling
+Kernel이 인식하는 것은 Process이지 Thread가 아니다.    
+따라서, Thread Scheduling은 다음과 같이 나뉜다.
+- Global Scheduling
+    - Kernel Level에서 Scheduling을 수행해준다.
+    - Kernel이 알아서 프로세스와 동일한 수준으로 쓰레드를 관리해준다.
+    - System-contention scope
+- Local Scheduling
+    - User Level에서 User Thread들 간에 Kernel Thread 하나에 Mapping 되어 있는 쓰레드가 여러 개 있을 경우
+        - 그 쓰레드들 중에서 누가 먼저 Scheduling이 될지를 결정함
+        - LWP 내부에서 결정됨
+    - Process-contention scope
+![Global-Local-Thread-Scheduling](./img/Global-Local-Thread-Scheduling.JPG)
+
+## OS Example
+Linux 2.6     
+- Linux Scheduling은 기본적으로 scheduling classes 따라서 Scheduling을 한다.
+    - 각각의 Priority 별로 그룹을 나누어져 있다.
+    - 그룹별로 다른 Scheduling Mechanism을 적용시킨다.
+    - active & expired
+        - 위 두 개의 array를 가지고 ready queue를 구현한다.
+    - active array 중에서 highest-priority task가 들어있는 array를 CPU 할당함
+- 각 Process는 3개의 Class로 나누어진다.
+    - SCHED_FIFO
+        - first-in first-out **real-time process**
+        - 우선순위가 높은 process 할당
+        - 다른 Process가 Runnable하지 않다면, 무조건 이 CPU를 독점함
+        - CPU를 한 번 잡으면 끝날 때까지 사용하게 함
+        - Kernel
+    - SCHED_RR
+        - round robin **real-time process**
+        - 일정시간 지나면 CPU를 다른 Process에게 할당해 줌
+        - Kernel
+    - SCHED_NORMAL
+        - conventional time-shared process
+        - **Conventional processes**
+        - 우선순위 낮은 process 할당
+        - User
+
+### Conventional processes
+- 모든 Conventional processessms 자기 고유의 static priority를 가진다.
+    - 그 priority의 범위는 100(우선순위 높음)~139(우선순위 낮음)이다.
+        - nice value를 통해 process의 우선순위를 바꿀 수 있음
+            - nice는 -20 ~ +19를 가짐
+            - nice value (ranging from -20 to +19) + 120
+    - 모든 새로운 프로세스는 부모의 static priority를 상속받는다.
+- static priority를 정해놓고 Round-Robin 방식으로 수행한다.
+    - static priority에 따라 time quantum을 다르게 한다.
+        - static priority가 낮은 process는 time quantum을 낮게 할당
+        - static priority가 높은 process는 time quantum을 높게 할당
+        - base time quantum
+            - = (140 - static priority) X 20 if static priority < 120
+            - = (140 - static priority) X 5 if static priority >=120
+- base priority에 따라서 Scheduling이 되어 있으면
+    - Starvation과 유사한 단점이 발생하게 된다.
+    - 이를 위해 Dynamic priority를 추가한다.
+        - Dynamic priority = max (100, min(static priority-bonus+5, 139))
+    - Bonus time은 
+        - waiting time이 길어질수록 Bonus time은 더 커진다.
+        - 그 범위는 0~10이다.

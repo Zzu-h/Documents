@@ -4,6 +4,16 @@
 - Memory
 - I/O
 
+## Von Neumann vs. Harvard architecture
+Von Neumann 
+![Von-Neumann](./img/Von-Neumann.PNG)
+- 데이터와 코드 부분이 분리되어 bus가 나누어져 있음
+
+Harvard architecture
+![Harvard-architecture](./img/Harvard-architecture.PNG)
+- AVR이 사용하고 있는 Architecture
+- 데이터와 코드 부분이 공유하는 bus를 사용
+
 # CPU
 Task
 - 명령어 수행
@@ -163,4 +173,139 @@ Instruction
         - Z: Zero
         - C: Carry
 
-        
+# Assembler Project
+![Assembler-Project](./img/Assembler-Project.PNG)
+1. Editor Program
+    - myfile.asm
+    - 여기선 atmel
+2. Assembler Program
+    1. myfile.eep
+    2. myfile.hex
+        - Flash 메모리 영역에 다운할 수 있는 프로그램
+    3. myfile.map
+        - 메모리 주소를 저장함
+    4. myfile.lst
+    5. myfile.ojb
+
+# How to speed up the CPU
+- Clock 빈도수 향상
+    - Clock이 빠르다?
+        - 같은 시간에 처리하는 속도를 증가시킬 수 있음
+    - 하지만 전류와 열이 많이 소모됨
+- Architecture 바꾸기
+    - Pipelining
+        - fetch와 execute를 동시에 실행한다.
+            - fetch에 들어온 일을 execute로 올리면서 밀린 일들을 fetch에 동시에 올림
+    - RISC(Reduced Instruction Set Computer)
+        - 제한된 명령어들을 가지고 있는 구조로 만드는 것
+        - 장점
+            - 명령어가 작고 구조가 단순하기에 일을 처리하는데 시간이 매우 짧다.
+
+## RISC VS. CISC
+HW를 제작할 때 RISC, CISC 둘 중 하나로 사용함   
+하지만 Embedded system 에서는 RISC를 사용함
+
+## RISC Architecture
+- fixed instruction size
+    - 명령어 크기가 고정되어 있다.
+    - 따라서, 디코딩이 쉽고 HW설계도 쉬움
+- 명령어 수가 적다.
+    - 제한된 명령어로 원하는 명령어를 제작해서 사용해야 하는 단점이 존재
+    - 어쩔 수 없이 메모리를 많이 사용하게 된다.
+- 주소 지정에 제한이 있음
+    - HW가 단순해지다 보니 주소도 제한적임
+- Load/Store기능
+- Harvard architecture
+    - Opcode와 Operand의 bus를 분리시킨 구조이다.
+    - 이를 통해 속도를 향상시킴
+- 명령어 처리 될 때 대부분 1 machine cycle을 기준으로 처리된다.
+- 32개의 Register 존재
+    - Stack과 Memory사용을 줄일 수 있음
+
+---
+
+# Jump
+## jump 주소 지정 방식
+PC에 다음 위치로 움직이기 위한 방식
+- PC = operand
+    - non conditional jmp
+        - JMP
+- PC = PC + operand
+    - Relative jump
+        - RJMP
+    - 현재 PC내용과 Operand값을 더해서 다음 주소지로 이동
+- PC = Z register
+    - Indirect jump
+        - IJMP
+
+# Stack & Call
+
+## Stack
+stack 예제
+```asm
+.INCLUDE "M128DEF.INC"
+	.ORG	0
+	;initialize the SP to point to the last location of RAM (RAMEND)
+	LDI	R16, HIGH(RAMEND)	;load SPH
+	OUT	SPH, R16
+	LDI	R16, LOW(RAMEND)	;load SPL
+	OUT	SPL, R16
+
+	LDI	R31, 0
+	LDI	R20, 0x21
+	LDI	R22, 0x66
+	PUSH	R20
+	PUSH	R22
+
+	LDI	R20, 0
+	LDI	R22, 0
+
+	POP	R22
+	POP	R31
+```
+
+- 스택을 사용하기 위해서, 스택 포인터는 SRAM에 주소로 초기화 되어야 한다.
+- 스택 포인터가 I/O 메모리에 있기 때문에 값들은 OUT 지시로 통해 로드될 수 있다.
+- RAMEND는 SRAM의 마지막 주소를 가리키는 상수이다. 하지만 RAMEND는 16비트 주소이므로 8비트, HIGH and LOW 함수로 쪼개서 레지스터에 저장할 수 있다.
+
+## Call
+1. Call을 하게 되면 다음 실행할 주소를 Stack에 저장하고 함수로 이동하게 된다.
+2. 다음 실행할 주소는 하위 8bit 먼저 Stack에 저장되고, 그 후 상위 8bit가 Stack에 저장된다.
+3. 함수에서의 작업이 끝나고 (RET) Stack에서 다음 실행할 주소를 PC에 다시 올리면서 다음 작업을 수행한다.
+
+Call 예제
+```asm
+    LDI R16,HIGH(RAMEND)
+    OUT SPH,R16
+    LDI R16,LOW(RAMEND)
+    OUT SPL,R16        
+    LDI R20,15
+    LDI R21,5
+    CALL FUNC_NAME
+    INC  R20
+L1:     
+    RJMP  L1
+
+FUNC_NAME:
+    ADD  R20,R21
+    SUBI  R20,3
+    RET
+
+```
+
+# Time delay
+명령어를 수행할 때 걸리는 delay 시간이다.     
+- 단위는 1 machine cycle로 계산한다.
+- 각 기계마다 시간이 주어지고 그 시간과 machine cycle의 곱을 통해 시간을 구할 수 있다.
+
+---
+
+# ATmega
+- DDRx
+    - 입력 또는 출력을 결정함
+    - 0xff, 즉 1일 경우 출력 기능을 수행
+    - 0x00, 즉 0일 경우 입력 기능을 수행
+- PORTx
+    - 출력을 수행함
+- PINx
+    - 입력을 수행함
