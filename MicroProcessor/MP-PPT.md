@@ -6,11 +6,11 @@
 
 ## Von Neumann vs. Harvard architecture
 Von Neumann 
-![Von-Neumann](./img/Von-Neumann.PNG)
+![Von-Neumann](./img/Von-Neumann.png)
 - 데이터와 코드 부분이 분리되어 bus가 나누어져 있음
 
 Harvard architecture
-![Harvard-architecture](./img/Harvard-architecture.PNG)
+![Harvard-architecture](./img/Harvard-architecture.png)
 - AVR이 사용하고 있는 Architecture
 - 데이터와 코드 부분이 공유하는 bus를 사용
 
@@ -20,7 +20,7 @@ Task
     - 명령어는 메모리에 존재
     - 메모리에서 명령어를 읽고 디코더에서 디코드 수행 후 명령어 수행
 ## Memory pin out
-![Memory-pin-out](./img/Memory-pin-out.PNG)
+![Memory-pin-out](./img/Memory-pin-out.png)
 
 메모리 중 가장 간단한 것     
 구성 요소
@@ -45,7 +45,7 @@ Task
 모든 주소 공간을 공유하되 IO/MEM, CS를 통해 메모리주소와 IO주소를 구분해서 받는다.
 
 
-![Connecting-Peripheral-IO-Memory-CPU](./img/Connecting-Peripheral-IO-Memory-CPU.PNG)
+![Connecting-Peripheral-IO-Memory-CPU](./img/Connecting-Peripheral-IO-Memory-CPU.png)
 
 구성 요소
 - Address bus
@@ -61,7 +61,7 @@ Task
 메모리와 분리된 주소 체계를 사용한다.    
 예를 들어 메모리를 0~15번의 주소를 사용하게 하고 나머지 16번부터 IO장치에게 할당을 한다.
 
-![Connecting-Memory-Mapped-IO-Memory-CPU](./img/Connecting-Memory-Mapped-IO-Memory-CPU.PNG)
+![Connecting-Memory-Mapped-IO-Memory-CPU](./img/Connecting-Memory-Mapped-IO-Memory-CPU.png)
 
 구성 요소
 - Address bus
@@ -103,7 +103,7 @@ solution
 ## Instruction Decoder
 명령어를 해석해준다.
 
-![Instruction-Decoder](./img/Instruction-Decoder.PNG)
+![Instruction-Decoder](./img/Instruction-Decoder.png)
 
 Instruction
 - Opcode
@@ -120,7 +120,7 @@ Instruction
 
 # General Purpose Microprocessors vs. Microcontrollers
 - General Purpose Microprocessors
-![General-Purpose-Microprocessors](./img/General-Purpose-Microprocessors.PNG)
+![General-Purpose-Microprocessors](./img/General-Purpose-Microprocessors.png)
 - 이는 bus를 통해 ram rom 등이 연결되어있다.
 - 따로 Component들을 연결할 필요가 있다.
 - 장점
@@ -128,7 +128,7 @@ Instruction
 
 
 - Microcontrollers
-![Microcontrollers](./img/Microcontrollers.PNG)
+![Microcontrollers](./img/Microcontrollers.png)
 - 이는 하나의 칩에 CPU RAM ROM 등 필요한 내용이 집적되어 있다.
 - 따로 연결할 필요없이 바로 사용이 가능하다.
 - Microcontrollers를 선정하는 방법은 자신이 하고자 하는 Application이 무엇인가에 달려있다.
@@ -149,7 +149,7 @@ Instruction
     - PIC32
 
 ## AVR 이름에 따른 의미
-![AVR-Name-Meaning](./img/AVR-Name-Meaning.PNG)
+![AVR-Name-Meaning](./img/AVR-Name-Meaning.png)
 
 ---
 
@@ -159,7 +159,7 @@ Instruction
 - 32 General Purpose registers (R0 to R31)
 - PC register
 - Instruction decoder
-![AVR-CPU-Component](./img/AVR-CPU-Component.PNG)
+![AVR-CPU-Component](./img/AVR-CPU-Component.png)
 
 - SREG: Status Register
     - CPU상태를 가지는 레지스터
@@ -174,7 +174,7 @@ Instruction
         - C: Carry
 
 # Assembler Project
-![Assembler-Project](./img/Assembler-Project.PNG)
+![Assembler-Project](./img/Assembler-Project.png)
 1. Editor Program
     - myfile.asm
     - 여기선 atmel
