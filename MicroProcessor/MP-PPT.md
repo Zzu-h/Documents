@@ -7,12 +7,12 @@
 ## Von Neumann vs. Harvard architecture
 Von Neumann 
 ![Von-Neumann](./img/Von-Neumann.png)
-- 데이터와 코드 부분이 분리되어 bus가 나누어져 있음
+- 데이터와 코드 부분이 공유하는 bus를 사용
 
 Harvard architecture
 ![Harvard-architecture](./img/Harvard-architecture.png)
+- 데이터와 코드 부분이 분리되어 bus가 나누어져 있음
 - AVR이 사용하고 있는 Architecture
-- 데이터와 코드 부분이 공유하는 bus를 사용
 
 # CPU
 Task
