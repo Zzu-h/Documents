@@ -1,0 +1,263 @@
+# Database Design Using the E-R Model
+ER Model(Entity Relationship Model)를 이용한 DB 설계     
+<br>
+
+ER Model은 Modeling의 방법이다.    
+따라서, Schema diagram으로 변환이 필요하다.    
+DB 설계 과정은     
+ER Model -> Schema diagram -> DB 구현을 따른다.
+
+## Design Phases
+1. Initial Phase
+    - 사용자들의 요구사항 분석
+2. Second Phase
+    - Data Model 선택
+    - 우리는 관계형 모델을 선택했다.
+        - 따라서, Conceptual Schema는 'Table 구조'이다.
+    - 필요한 Operation(또는 Transactions)에 따라 data model을 선택한다.
+3. Final Phase
+    - DB 구현단계
+    - Logical Design - Database Schema를 결정한다.
+        - relation schemas(테이블 구조)를 모으면 DB Schema가 된다.
+        - Business 결정
+            - 속성에 어떤 것을 넣을 지 결정
+        - Computer Science 결정
+            - 속성들을 테이블에 어떻게 표현할 것인지 / 어떻게 포함할 것인지를 결정
+    - Physical Design
+        - 인덱스, 파일 구성, 등 Disk와 관련된 디자인
+
+## Design Alternatives(선택사항)
+DB 구조를 디자인할 때 피해야 할 사항
+- Redundancy(중복)
+    - 데이터의 중복을 피해야 한다.
+    - Example
+        - A 테이블에 주소가 저장되어 있는데, B 테이블에도 똑같이 주소가 저장되면 안된다.
+        - 저장이 가능은 하지만 이는
+            - Disk의 낭비를 초래
+            - 정보 불일치 초래
+- Incompleteness(불완전)
+    - 설계가 잘못되어서 입력이 안된다거나 표현이 안되면 안된다.
+
+## Design Approaches
+- Entity Relationship Model
+    - Entity: 사물 또는 객체를 의미
+        - 이런 Entity들은 Attributes(속성)을 가지고 있다.
+    - Relationship: Entity들 간의 관계
+    - entity-relationship diagram를 가지고 표현한다.
+- Normalization Theory
+    - 정규화(Chapter 7)
+
+# ER Model
+- enterprise schema(전체, 즉 DB의 구조)
+    - Table들이 모여 만들어지는 DB의 Schema
+- ER data model의 요소
+    - entity sets
+    - relationship sets
+    - attributes
+- ER diagram
+
+## Entity Sets
+- Entity는 실존하는 객체이고 다른 객체와는 구분 가능한 것이다.
+    - Ex) Company, plant etc..
+    - Ex2) Table에서 각각의 Tuple들로도 볼 수 있다.
+- Entity Set
+    - Ex) Companies, trees etc..
+    - Ex2) Table이 될 수 있다.
+    - Entity Set과 관계가 합쳐지면 Table이 된다.
+        - 즉 Table과는 다른 것임
+- Primary Key
+    - Entity를 식별할 수 있는 key
+
+## Relationship Sets
+- Relationship은 각 Entity 사이의 관계이다.
+    - Ex)	 44553 (Peltier) 	    advisor             22222 (Einstein) 
+    -        student entity      relationship set	     instructor entity
+- Relationship Setsdms 2개 이상의 n까지의 Entity들 간의 관계
+    - 일반적으로 2개 정도의 관계가 많이 나옴
+    - Ex) {(e1, e2, … en) | e1  ∈ E1, e2 ∈  E2, …, en ∈  En}
+
+- ER Diagram으로 Relationship 표현
+    - Diamond로 표현한다.
+    - ![Relationship-ER-Diagram](./img/Relationship-ER-Diagram.png)
+
+### Attribute at Relationship
+![Attribute-at-Relationship](./img/Attribute-at-Relationship.png)
+
+- Relationship으로 속성을 가질 수 있다.
+- 아래 그림과 같이 지도교수가 된 날짜라는 속성을 통해 관계를 지을 수 있다.
+    - ![Attribute-at-Relationship-Ex](./img/Attribute-at-Relationship-Ex.png)
+    - 또 예를 들어 지도교수 history등과 같은 속성으로 관계를 지을 수 있다.
+- 속성은 점선과 사각형을 통해 표현한다.
+
+## Roles
+- Role: entity가 relationship에서 수행하는 기능
+- Role은 아래 이미지와 같이 선으로 연결 후 그 위에 어떤 역할인지 명시해준다.
+![Roles-ER-Model](./img/Roles-ER-Model.png)
+
+## Degree of a Relationship Set
+- Binary Relationship
+    - 두 개의 Entity가 연관지어져 있는 것
+        - degree two
+    - 대부분의 Relationship은 binary이다.
+- Ternary Relationship
+    - 세 개의 Entity가 연관지어져 있는 것
+    - 3개 이상은 잘 안씀
+
+## Complex Attribute
+Attribute type
+- Simple and Composite Attribute
+- Single-valued and multivalued attributes
+    - Ex) Phone_numbers
+- Derived attributes
+    - Ex) age and given date_of_birth
+
+![Complex-Attribute-ERD-Ex](./img/Complex-Attribute-ERD-Ex.png)
+
+### Composite Attributes
+- 하나의 값을 여러 개로 분리할 수 있을 때 Composite Attributes라 한다.
+![Composite-Attributes-Ex](./img/Composite-Attributes-Ex.png)
+
+## Mapping Cardinality Constraints
+- Cardinality: Entity의 갯수
+- Cardinality Constraints
+    - Entity들이 몇 개가 관계지어질 수 있는지의 제약조건
+- type
+    - One to one
+    - One to many / Many to one
+        - 두 개의 위치만 바뀔 뿐 동일함
+    - Many to many 
+
+### Cardinality Constraints in ERD
+- (—): many
+- (→): one
+![Cardinality-Constraints-in-ERD](./img/Cardinality-Constraints-in-ERD.png)
+
+## Total and Partial Participation
+- Total Participation
+    - (=): Total
+    - "모든"을 의미함
+- Partial Participation
+    - 일부 Entity가 관계에 참여하지 않음을 의미
+    - 아래 이미지의 경우 지도교수가 없을 경우를 의미
+![Total-Partial-Participation](./img/Total-Partial-Participation.png)
+
+## 복잡한 제약조건을 표현하는 표기법
+- Notation
+    - `minimum..maximum`
+- maximum = *
+    - No limit을 의미
+![Notation-Complex-Constraint-ERD](./img/Notation-Complex-Constraint-ERD.png)
+- instructor
+    - 최소 0명
+        - 즉 한명도 매칭이 안되도 됨
+    - 최대 제한 없음
+- student
+    - 최소 1명
+        - 적어도 1명은 매칭이 되어야 함
+    - 최대 1명
+        - 즉, 다수 매칭 불가
+    - 따라서, 무조건 한 명을 매칭해야 함
+
+## Cardinality Constraints on Ternary Relationship
+3개의 Relationship에서는 1개의 화살표만 사용한다.
+- 화살표가 2개 이상 된다면 의미가 혼동될 수 있음
+
+<br>
+
+# Primary key
+- Entity sets
+- Relationship sets
+- Weak entity sets
+## Primary key for Entity Sets
+- Entity를 식별할 수 있는 Attribute의 set을 key로 한다.
+## Primary Key for Relationship Sets
+mapping cardinality of the relationship set에 따라 달라진다.
+- One-to-one relationships.
+    - 둘 중 아무 Key를 사용하면 됨
+    - 둘 다 Unique하기 때문
+    - either one of the participating entity sets
+- One-to-Many relationships / Many-to-one relationships
+    - “Many”에 해당하는 부분은 고유할 것이므로 “Many”의 Entity에 대해서 Primary Key를 결정한다.
+    - “Many” side
+- Many-to-Many relationships.
+    - 두 Entity를 pair로 Key를 결정한다.
+    - union of the primary keys
+
+## Weak Entity Sets
+- Weak Entity
+    - entity type은 반드시 key 속성을 가져야 하지만 key 속성이 정의되지 않는 개체들
+- Primary Key를 형성하기에는 Attribute가 충분하지 않아서 주키를 만들지 못한다.
+    - 이 Weak Entity Sets은 관계를 통해 다른 Entity sets에 의존하여 주 키를 형성할 수 있다.
+    - 따라서, 혼자로는 자립이 불가하다.
+- identifying entity에 종속되어 있다.
+    - identifying entity는 Weak Entity을 소유함
+- 
+- 단어
+    - identifying entity
+        - Weak Entity Sets을 식별해주는 Entity
+    - discriminator(변별자)
+        - Key가 되기 전의 속성들
+        - 잠시 키 대신 사용
+    - strong entity set
+        - Weak Entity가 아닌 Entity set
+
+![Weak-Entity-Sets-Ex](./img/Weak-Entity-Sets-Ex.png)
+
+- Notation
+    - 두 개의 직사각형을 중첩한 형태
+    - discriminator는 점선으로 표시하여 구분한다.
+    - Identifying Relationship
+        - 위 이미지에서 sec_course이다.
+        - 두 개의 마름모를 중첩한 형태
+- course
+    - Indentifying entity
+- sec_course
+    - Identifying relationship
+- section
+    - Weak Entity
+
+<br>
+
+# Redundant Attributes
+![Remove-Redundant-Attributes](./img/Remove-Redundant-Attributes.png)
+
+- 위 student의 dept_name은 stud_dept의 관계에 의해 속성이 중복된다.
+- 이는 바람직하지 않으므로 제거를 한다.
+- 어차피 stud_dept 관계에 의해 속성이 생기기 때문이다.
+
+# Reduction to Relation Schemas
+ER Diagram만 완벽하다면, Relation Schema는 기계적으로 완벽히 구현이 가능함
+
+## Representing Entity Sets
+Entity는 그대로 Table이 된다.
+- Strong Entity
+    - 속성 그대로 Table을 생성한다.
+- Weak Entity
+    - Strong Entity Set을 참조하여 Table을 생성한다.
+
+## Representing Relationship Sets
+
+### one-to-many relationship 
+- “many”쪽에서 “one”을 포함한다.
+![Reduction-one-to-many-relationship-Example](./img/Reduction-one-to-many-relationship-Example.png)
+
+- instructor = (ID, name, salary, dept_name)
+- student = (ID, name, tot_cred, advisor_ID, dept)
+
+### many-to-many relationship
+many-to-many relationship에서는 별도의 Table을 생성한다.    
+이 Table에 두 관계 Pair을 저장한다.
+
+![Reduction-many-to-many-relationship-Example](./img/Reduction-many-to-many-relationship-Example.png)
+
+- member = (student_id, club_title)
+    - 두 Entity의 Primary key를 가져와서 만듦
+
+### one-to-one relationship
+두 Entity set 중 아무거나 기준으로 해서 주 키를 포함함
+
+![Reduction-one-to-one-relationship-Example](./img/Reduction-one-to-one-relationship-Example.png)
+
+- Husband = (ID, address, phone, wife) or Wife = (ID, address, phone, husband)
+    - 둘 다 이렇게 하면 안됨
+    - 둘 중 하나만!

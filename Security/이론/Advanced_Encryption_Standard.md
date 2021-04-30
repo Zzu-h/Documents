@@ -148,4 +148,47 @@ S-box를 통해 문자 치환을 수행한다.
 ## Intel AES New Instruction
 - AES만을 수행하는 명령어가 생김
 - AES NI라고 함
-- 
+
+# 암호 모듈 검증 제도
+- 국가정보원 암호 모듈 검증 제도
+    - KCMVP (Korea Cryptographic Module Validation Program)
+    - 국가나 공공기관 정보통신망에서 비밀로 분류되지 않은 중요 정보 보호에 사용되는 암호 모듈의 안정성과 구현 적합성을 검증하는 제도
+
+## 검증 대상 알고리즘
+- 블럭암호: ARIA, SEED, LEA, HIGHT
+    - 운영모드
+        - 기밀성: ECB, CBC, CFB, OFB, CTR
+        - 기밀성/인증
+- 해시함수
+    - SHA-2 (224, 256, 384, 512), SHA-3, LSH
+- 메시지인증
+    - 해시기반 HMAC, 블록암호기반 CMAC, GMAC
+- 난수발생기
+    - 해시기반 Hash_DRBG, HMAC_DRBG, 블록암호기반 CTR_DRBG
+- 공개키암호
+    - RSAES (2048, 3072)
+- 전자서명
+    - RSA-PSS (2048, 3072), KCDSA, EC-KCDSA, ECDSA
+- 키설정
+    - DH, ECDH
+- 키유도
+    - KBKDF (HMAC, CMAC), PBKDF (HMAC)
+
+## 한국 표준 블럭 암호
+- SEED (1998)
+    - **TTA**S.KO-12.0004 / IETF RFC 4269
+    - DES와 유사한 구조 (Feistel Network)
+    - 128-bit block, 128-bit key, 16 rounds
+    - ![Korea-BlockCyper-SEED](./img/Korea-BlockCyper-SEED.JPG)
+- ARIA (2004)
+    - IETF RFC 5794
+    - AES와 유사한 구조 (Substitution-Permutation Network)
+    - 128 bit block, 12/14/16 rounds for 128/192/256 bit key
+    - SPN
+    - ![Korea-BlockCyper-ARIA](./img/Korea-BlockCyper-ARIA.JPG)
+- LEA (2014)
+    - **TTA**K.KO-12.0223
+    - <u>경량 블록 암호, 32-bit ARX 구조</u> (S-box 없음)
+        - Add, Rotate, XOR
+    - 128 bit block, 24/28/32 rounds for 128/192/256 bit key
+    - ![Korea-BlockCyper-LEA](./img/Korea-BlockCyper-LEA.JPG)
