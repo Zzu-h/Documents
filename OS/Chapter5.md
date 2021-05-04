@@ -297,8 +297,7 @@ Kernel이 인식하는 것은 Process이지 Thread가 아니다.
     - Process-contention scope
 ![Global-Local-Thread-Scheduling](./img/Global-Local-Thread-Scheduling.JPG)
 
-## OS Example
-Linux 2.6     
+# OS Example (Linux 2.6)     
 - Linux Scheduling은 기본적으로 scheduling classes 따라서 Scheduling을 한다.
     - 각각의 Priority 별로 그룹을 나누어져 있다.
     - 그룹별로 다른 Scheduling Mechanism을 적용시킨다.
@@ -322,7 +321,7 @@ Linux 2.6
         - 우선순위 낮은 process 할당
         - User
 
-### Conventional processes
+## Scheduling of Conventional processes
 - 모든 Conventional processessms 자기 고유의 static priority를 가진다.
     - 그 priority의 범위는 100(우선순위 높음)~139(우선순위 낮음)이다.
         - nice value를 통해 process의 우선순위를 바꿀 수 있음
@@ -343,3 +342,96 @@ Linux 2.6
     - Bonus time은 
         - waiting time이 길어질수록 Bonus time은 더 커진다.
         - 그 범위는 0~10이다.
+
+### Ready queue 구현하기
+Linux에서는 Ready queue를 2개의 Array로 구현한다.
+- Active array
+    - CPU에 올라갈 예정인 Process들 대기
+    - 위 Base time quantum만큼 사용하고 Expired array로 Running이 끝난 Process를 옮긴다.
+- Expired array
+    - Active array에서 running이 끝난 Process들을 적재한다.
+    - Active array의 모든 Process들이 time quantum만큼 실행 하고 비워진다면,
+        - Expired array와 Active array를 Swap한다.
+        - 그리고 다시 time quantum만큼 실행한다.
+- 이렇게 함으로써 Round-Robin 방식과 유사한 형태로
+    - Starvation이 생기는 것을 줄여준다.
+
+## Scheduling of Real-time processes
+Conventional Process보다 우선순위가 높은 Process들을 별도로 이 스케쥴링 함
+- 스케줄러는 항상 더 높은 우선순위의 Process를 우선시 한다.
+- Conventional Process와는 달리 Real-time Process는 항상 active하다고 생각한다.
+- 위와 같은 이유로 Ready queue는 Actvie array만 있다.
+- Scheduling 방식
+    - 기본적으로 우선순위대로 Process들을 실행한다.
+        - <u>같은 우선순위의 Process들에 대해</u>
+            - 다음의 두 가지 방식으로 처리를 한다.
+    - Scheduling of real-time FIFO processes
+        - FIFO 형식으로 Real-time Scheduling을 한다.
+    - Scheduling of real-time RR processes
+        - RR 형식으로 Real-time Scheduling을 한다.
+
+## New scheduling method(Linux 2.6.13)
+- Linux 2.6.13에서 Conventional classes에 대해 새로운 Scheduling 기법이 추가됨(CFS)
+- [Completely Fair Sharing (CFS)](#cfs) scheduler
+    - CONFIG_FAIR_GROUP_SCHED
+
+### CFS
+- 각각의 Process들이 CPU time에 1/n 만큼 사용하는 것이 공평하고 이상적이다.
+    - 하지만 실제로는 이렇게 구현이 힘듦
+- CFS는 최대한 위처럼 공평하게끔 할당해주도록 하는 것을 목표로 함
+- Virtual time
+    - CFS를 구현하기 위해 도입된 개념
+        - 시간은 정수이므로 1/n처럼 유리수를 표현할 수 없다.
+        - 이를 위해 Virtual time을 넣어서 생각을 하게 되었다.
+    - 이 Vruntime이 가장 적다는 것은 현재 가장 불공평한 상태에 놓여있음을 의미한다.
+        - 따라서, 이 가장 적은 Vruntime의 Process에게 CPU를 할당해 줌
+- Example
+    - 6의 CPU를 A가 2/3 B가 1/3을 할당하기 위해
+        - A가 1~4, B가 5~6을 할당받는 것은 불공평하다 생각이 듦
+        - A-B-A-A-B-A로 할당 받는 것이 위 사례보다 더 공평함
+    - 이를 구현하기 위한 CFS이다.
+
+#### Vruntime
+Virtual time이다.    
+각 Vruntime은 처음은 항상 0임.
+- `vruntime += (NICE_0_LOAD / se->load.weight) * delta_exec`
+    - NICE_0_LOAD
+        - CPU가 어떻게 나누어지는지에 따라 달라지는 상수값
+    - se->load.weight
+        - 자신의 Process의 비중
+        - 위 예제의 경우 A는 2 B는 1이 된다.
+- Vruntime이 작을 경우
+    - CPU에 먼저 할당된다.
+- Vruntime이 같을 경우
+    - weight을 비교하여 더 비중이 높은 것이 CPU에 할당된다.
+
+# Algorithm Evaluation
+알고리즘이 잘 작동하는 것인지 확인
+
+1. Deterministic modeling
+    - 가장 간단한 방식
+        - 모델링을 하는 방법이다.
+    - 단점
+        - Process가 매우 많을 때 도착시간, Priority 등을 일일이 그리기에는 너무 벅차다.
+        - Deterministic하게 Arrival time이 나오지 않는다.
+2. Queueing models
+    - 실제적인 workload를 흉내내서 실제와 비슷한 환경을 만들어낸 상태
+        - 수치적인 모델을 만들어낼 수 있는 형태
+    - 컴퓨터 시스템을 Server를 네트워크으로 이해함
+    - CPU는 Ready queue가 있는 server로 이해함
+    - 이를 이용해서 어떤 역할을 하는가?
+        - Utilization, Arrival 빈도수, 어떤 Rate로 Service가 실행되는가를 통해
+        - 평균 queue 길이와, 평균 waiting time 등을 가지고 수치적인 모델링을 함
+    - 간단한 Formula
+        - `Average queue length = average arrival rate * average waiting time`
+3. Simulations
+- 실제로 가장 시스템 만드는 사람들이 많이 쓰는 방식
+- 어떤 Process가 언제 생겨서 CPU를 얼마나 썼는지, I/O가 언제 발생했는지를 모두 Log로 남겨둔다.
+    - 이를 이용하여
+        - FCFS Simulation
+        - SJ Simulation
+        - RR Simulation
+4. Implementation
+- 실제로 구현해봄
+    - 가장 일이 많지만 가장 정확함
+- 실제로 구현하는 만큼 많은 비용이 든다.

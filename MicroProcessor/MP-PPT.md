@@ -309,3 +309,113 @@ FUNC_NAME:
     - 출력을 수행함
 - PINx
     - 입력을 수행함
+
+
+--- 
+
+<br>
+
+# 중간고사 끝 기말고사 범위
+
+<br>
+
+---
+# Polling
+- 사용자가 명령어를 사용하여 입력 핀의 값을 계속 읽어서 변화를 알아내는 방식
+
+# Interrupt
+- "방해하다", "훼방하다"의 의미
+- 어떤 작업을 진행하고 있다가 갑자기 다른 일이 발생하여 먼저 처리해야 하는 상황을 인터럽트 발생이라 한다.
+- Interrupt service routine
+    - 인터럽트 발생 시 발생한 Interrupt를 확인하고 그 일을 처리 후 원래 하던 일을 진행함
+- 발생 시기를 예측할 수 없는 경우에 더 효율적
+- ATmega128은 Interrupt의 종류가 35개 존재
+- 하던 일을 멈추고 Interrupt를 처리 할 때
+    - 다음 수행할 일의 주소는 **Stack에 저장되어 있다.**
+- [참고](../OS/Chapter1.md/#interrupt)
+- MCU 자체가 하드웨어적으로 그 변화를 체크하여 변화시에만 일정한 동작을 하는 방식
+
+## Interrupt 구성 요소
+- 발생원
+    - 어디서 발생했는가?
+- Priority
+    - 2개 이상의 요청에서 어떤 Interrupt를 먼저 처리하는가
+- Interrupt Vector
+    - Service Routine의 시작 주소
+
+## Interupt 종류
+- 발생 원인에 따른 인터럽트 분류
+    - 내부 인터럽트
+    - 외부 인터럽트
+- 차단 가능성에 의한 인터럽트 분류
+    - 차단(마스크) 불가능(Non maskable, NMI) 인터럽트
+        - Reset과 같이 무조건 처리해야 하는 Interrupt
+    - 차단(마스크) 가능(Maskable) 인터럽트
+        - SREG의 I가 활성되어 있는 상태에서
+        - 세부적인 Interrupt들을 처리해도 되고 안해도 됨을 결정할 수 있는 Interrupt
+    - Maskable하다는 것은
+        - Enable을 시키는 것을 조절가능한 상태
+        - 즉 Interrupt의 처리를 해도되고 안해도 되는 상태이다.
+- 인터럽트 조사 방식에 따른 분류
+    - 조사형 인터럽트(Poleled Interrupt)
+    - 벡터형 인터럽트(Vectored Interrupt)
+
+<br>
+
+# Atmega128 Interrupt
+- 모든 Interrupt는 전역 Interrupt Enable bit인 SREG의 I비트와
+    - 각각의 개별적인 Interrupt Flag bit가 할당되어 있다.
+- Interrupt들과 개개의 Reset vector는 각각 개별적인 프로그램 Vector를 프로그램 메모리 공간 내에 가짐
+- 모든 Interrupt들은 개별적인 Interrupt 허용 비트를 할당 받는다.
+
+## 종류
+- 차단 가능한 외부 Interrupt
+- 리셋 포함 총 35개의 Interrupt vector를 가짐
+    - Reset 1개
+    - 외부 핀을 통한 외부 Interrupt 8개
+    - 타이머 관련 14개
+        - 타이머 0(2개), 타이머 1(5개), 타이머 2(2개), 타이머 3(5개)
+    - UART 관련 6개
+        - USART0(3개), USART1(3RO)
+    - 기타 6개
+## SREG
+상태 레지스터(Status REGister): ALU의 연산 후 상태와 결과를 표시하는 레지스터 [SREG 참고](#avr-cpu)
+
+## EIMSK
+인터럽트 마스크 레지스터(External Interrupt MaSK register)
+- 외부 인터럽트의 개별적인 허용 제어 레지스터
+- INTn이 1로 set되면 외부 Interrupt Enable이 된다.
+- bit
+    - ![EIMSK-BIT](./img/EIMSK-BIT.JPG)
+
+## ATMega 128 Interrupt Priority
+- 프로그램 메모리 공간에서 최하위 주소는 Reset과 Interrupt vector로 정의되어 있음
+- 리스트는 서로 다른 Interrupt들의 우선순위를 결정한다.
+- 최하위 주소에 있는 벡터는 최상위 주소에 있는 벡터에 비해 우선순위가 높다.
+    - RESET: 최우선 순위
+    - INT0: 2순위
+
+## 외부 Interrupt Trigger
+- Interrupt 발생의 유무를 판단하는 근거
+- 방법
+    - Edge Trigger
+        - 입력 신호가 변경되는 순간을 Interrupt Trigger로 사용함
+        - 2가지의 Trigger가 존재
+            - 하강 에지 트리거(Falling Edge)
+                - 1 -> 0
+            - 상승 에지 트리거(Rising Edge)
+                - 0 -> 1
+    - Level Trigger
+        - 입력 신호가 일정 시간동안 원하는 Level을 유지하면 Trigger로 작용됨
+        - 0에서 Trigger로 작용함
+
+### Trigger 설정
+- EICRA(External Interrupt Control Regitser A)
+    - 외부 Interrupt 0~3의 Trigger 설정에 사용
+    - ![EICRA](./img/EICRA.JPG)
+- EICRB(External Interrupt Control Regitser B)
+    - 외부 Interrupt 4~7의 Trigger 설정에 사용
+    - ![EICRB](./img/EICRB.JPG)
+- EIFR(Interrupt Flag Register)
+    - 외부 Interrupt 발생 여부를 알려주는 Register
+    - 외부 Interrupt가 Edge Trigger에 의해 요청된 경우 허용여부에 상관 없이 1로 set
