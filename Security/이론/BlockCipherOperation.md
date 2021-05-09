@@ -103,3 +103,17 @@ ECB는 FeedBack이 없음
 
 ## Comparison with Table
 ![Comparison-Modes-of-Operation](./img/Comparison-Modes-of-Operation.JPG)
+
+# EXAMPLE
+## IEEE 802.11(WPA2/3)
+- AES-CCMP
+    - CTR with CBC-MAC protocol
+        - CTR Mode로 Encryption하여 기밀성 제공
+        - CBC Mode로 MAC을 제공하면서 무결성과 인증을 제공
+    - AES Block cipher를 사용하되,
+    - 인증, 무결성, 기밀성 제공하기 위해 CCMP를 사용
+
+## TLS v1.3(IETF RFC 8446)
+- Transport Layere Security
+    - TCP/UDP
+- 전자 서명은 RSA로 구현

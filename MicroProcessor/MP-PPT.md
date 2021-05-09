@@ -345,8 +345,10 @@ FUNC_NAME:
 
 ## Interupt 종류
 - 발생 원인에 따른 인터럽트 분류
-    - 내부 인터럽트
-    - 외부 인터럽트
+    - 하드웨어 인터럽트
+        - 내부 인터럽트: 마이크로 컨트롤러 내부의 기능에 의해 발생
+        - 외부 인터럽트: 마이크로 컨트롤러 외부에 부가된 소자에 의해 발생
+    - 소프트웨어 인터럽트
 - 차단 가능성에 의한 인터럽트 분류
     - 차단(마스크) 불가능(Non maskable, NMI) 인터럽트
         - Reset과 같이 무조건 처리해야 하는 Interrupt
@@ -359,7 +361,8 @@ FUNC_NAME:
 - 인터럽트 조사 방식에 따른 분류
     - 조사형 인터럽트(Poleled Interrupt)
     - 벡터형 인터럽트(Vectored Interrupt)
-
+## Interrupt 처리 순서
+![Interrupt-Treat-Order](./img/Interrupt-Treat-Order.JPG)
 <br>
 
 # Atmega128 Interrupt
@@ -396,6 +399,7 @@ FUNC_NAME:
     - INT0: 2순위
 
 ## 외부 Interrupt Trigger
+![External-Interrupt-Register](./img/External-Interrupt-Register.JPG)
 - Interrupt 발생의 유무를 판단하는 근거
 - 방법
     - Edge Trigger
@@ -410,6 +414,9 @@ FUNC_NAME:
         - 0에서 Trigger로 작용함
 
 ### Trigger 설정
+- [EIMSK](#eimsk)(External Interrupt MaSK register)
+    - 두꺼비집 같은 존재
+    - SREG Global Interrupt bit가 1로 set되어야만 사용 가능
 - EICRA(External Interrupt Control Regitser A)
     - 외부 Interrupt 0~3의 Trigger 설정에 사용
     - ![EICRA](./img/EICRA.JPG)
@@ -419,3 +426,35 @@ FUNC_NAME:
 - EIFR(Interrupt Flag Register)
     - 외부 Interrupt 발생 여부를 알려주는 Register
     - 외부 Interrupt가 Edge Trigger에 의해 요청된 경우 허용여부에 상관 없이 1로 set
+
+## ISR의 작성
+- 인터럽트의 서비스는 벡터 주소라는 교유 번지에서 시작
+- 인터럽트 벡터에는 인터럽트 기능을 서비스 하기 위한 프로그램이 위치해 있어야 함
+- 인터럽트 서비스 루틴이 호출되기 위해서는 C 언어에서 인터럽트 서비스 루틴이 올바르게 선언되어 있어야 한다.
+- Interrupt service routine 선언
+    - SIGNAL(인터럽트 명)
+    - Example
+        - External Interrupt
+            - `SIGNAL(INT0_vect)` / `SIGNAL(INT2_vect)`
+        - Timer Interrupt
+            - `SIGNAL(TIMER2_OVF_vect)`
+- Interrupt를 사용하기 위해서는 SREG의 Ibit 즉, 7번 bit를 1로 set해야 한다.
+    - OR 연산을 통해서
+        - SREG |= 0x80
+    - 어셈블리 명령어를 통해서
+        - `#asm("sei");`: 전체 인터럽트 허가
+        - `#asm("cli");`: 전체 인터럽트 금지
+
+### ISR 초기화 과정
+1. EIMSK 레지스터의 비트 설정을 통한 사용하고자 하는 인터럽트의 허가
+2. EICRA 레지스터의 비트 설정을 통한 인터럽트 트리거 방식 설정
+3. SREG의 I 비트의 설정을 통한 전체 인터럽트를 허가
+- Example
+    ```c
+    void Interrupt_init(void)
+    {
+        EIMSK = 0x01; // INT0 비트 설정(외부 인터럽트0 허가) 
+        EICRA = 0x02; // ISC01 =1, ISC00=1(외부인터럽트 0 하강에지 비동기 트리거)
+        sei(); // 전체 인터럽트 허가
+    } 
+    ```

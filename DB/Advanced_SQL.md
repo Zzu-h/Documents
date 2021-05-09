@@ -201,3 +201,136 @@ Cursor를 이용하여 수정, 삽입, 삭제의 기능도 가능하다.
 
 ### Example of PL/SQL
 ![Example-of-PLSQL](./img/Example-of-PLSQL.JPG)
+
+---
+
+<br>
+
+# 기말고사 범위
+
+
+<br>
+
+# Functions and Procedures
+Functions and Procedures를 구분을 잘 하지 않음
+- Functions
+    - 일반적으로 return값이 있음
+- Procedures
+    - 일반적으로 Argument에 값을 반환함
+- Functions와 Procedures는 "business logic"을 따른다.
+    - business logic
+        - 휴가날짜를 계산, 평점에 F학점을 넣을 것인가 뺄것인가 등과 같은 규정을 말함
+    - 이를 따로 저장해서 사용하면 편리함
+- SQL, C, Java, 등에서 포함할 수 있음
+
+## Functions 선언
+- Example Code: Declare Function
+    ```sql
+    create function dept_count (dept_name varchar(20))
+        returns integer
+        begin
+        declare d_count  integer;
+            select count (* ) into d_count
+            from instructor
+            where instructor.dept_name = dept_name
+        return d_count;
+    end
+    ```
+    - `create function dept_count (dept_name varchar(20))`
+        - 함수 생성코드
+        - 함수 명: dept_count
+        - 함수 매개변수: (dept_name varchar(20))
+            - 매개변수 명과 타입을 씀
+    - `returns integer`
+        - Return type
+        - Return's'를 조심
+- Example Code: Use Function
+    ```sql
+    select dept_name, budget
+    from department
+    where dept_count (dept_name ) > 12
+    ```
+
+### Table Functions
+- Table을 return하는 함수
+- Example Code
+    ```sql
+    create function instructor_of (dept_name char(20))
+        returns table  (  
+                ID varchar(5),
+                name varchar(20),
+                dept_name varchar(20),
+                salary numeric(8,2))
+            return table
+                (select ID, name, dept_name, salary
+                from instructor
+                where instructor.dept_name = instructor_of.dept_name)
+
+    ```
+
+## SQL Procedures
+- Example Code: Declare Procedures
+    ```sql
+    create procedure dept_count_proc (in dept_name varchar(20),
+                                        out d_count integer)
+        begin
+            select count(*) into d_count
+            from instructor
+            where instructor.dept_name = dept_count_proc.dept_name
+        end
+    ```
+    - ` create procedure dept_count_proc (in dept_name varchar(20),out d_count integer)`
+        - in: 입력 argument
+        - out: 출력 argument
+- Example Code: Use Procedures
+    ```sql
+    declare d_count integer;
+    call dept_count_proc( 'Physics', d_count);
+    ```
+    - 'Physics'를 입력으로 받고 d_count를 통해서 결과값을 읽어 온다.
+- SQL Procedures은 dynamic SQL으로 프로그램 실행 중(runtime)에 생성된다.
+- 오버로딩이 가능하다.
+    - 같은 이름의 Procedures를 선언하더라도, 매개변수 수가 다르면 다르게 동작하는 Procedures를 만들 수 있다.
+
+## Language Constructs for Procedures & Functions
+- 기본적으로 **begin과 end를** 통해서 내용을 실행한다.
+- 반복문
+    - while
+        ```sql
+        while boolean expression  do
+            sequence of statements ;
+        end while
+        ```
+        - 일반 whilte문과 비슷함 while
+        - 다음에 비교문이 들어감
+    - repeat
+        ```sql
+        repeat
+                sequence of statements ;
+            until boolean expression 
+            end repeat
+        ```
+        - `until boolean expression`
+            - 여기서 비교문을 수행함
+            - do~while문 실행방식
+    - for
+        ```sql
+        declare n  integer default 0;
+        for r  as
+            select budget from department
+            where dept_name = 'Music'
+        do
+            set n = n + r.budget
+        end for
+        ```
+        - 이는 테이블의 모든 튜플을 돌고 종료한다.
+- 조건절
+    - if-then-else
+        ```sql
+        if boolean  expression
+            then statement or compound statement
+        elseif boolean  expression
+            then statement or compound statement
+        else statement or compound statement
+        end if
+        ```

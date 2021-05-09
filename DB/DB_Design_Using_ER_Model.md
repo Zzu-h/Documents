@@ -191,7 +191,7 @@ mapping cardinality of the relationship set에 따라 달라진다.
     - 따라서, 혼자로는 자립이 불가하다.
 - identifying entity에 종속되어 있다.
     - identifying entity는 Weak Entity을 소유함
-- 
+
 - 단어
     - identifying entity
         - Weak Entity Sets을 식별해주는 Entity
@@ -261,3 +261,123 @@ many-to-many relationship에서는 별도의 Table을 생성한다.
 - Husband = (ID, address, phone, wife) or Wife = (ID, address, phone, husband)
     - 둘 다 이렇게 하면 안됨
     - 둘 중 하나만!
+
+### Entity Sets with Composite Attributes
+복합 속성을 가질 경우 다음과 같이 펼쳐서 생성한다.
+![Composite-Attributes-relationship-Example](./img/Composite-Attributes-relationship-Example.png)
+- 이렇게 표현하는 것은 선택이다.
+    - 무조건 다 펼칠 필요는 없음
+    - 필요한것만 펼치기
+- phone_number과 같이 다중값 속성은 별도 테이블로
+
+### Entity Sets with Multivalued Attributes
+다중값 속성은 따로 분리해서 다른 테이블로 관리한다.
+![Multivalued-Attributes-relationship-Example](./img/Multivalued-Attributes-relationship-Example.png)
+- 하나의 속성에 대해 여러 값을 매칭하는 경우
+    - 별도의 테이블을 생성해서 그 테이블로 관리를 한다.
+- 위 이미지 time_slot_id처럼 day, start_time, end_time이 여러개가 존재할 수 있을 경우 별도 테이블인 time_slot을 따로 만든다.
+- section Entity set은 time_slot을 foreign key로 받는 것이 아니다!
+    - 무결성 제약조건으로 그저 참조한다
+
+# Extended E-R Features
+
+## Specialization
+- 사람이라는 그룹을 남자와 여자로 나눌 수 있고, 그 중 남자를 군필과 미필로 나눌 수 있고 이와 같이 점점 세분화 하여 구분짓는 것을 특수화(Specialization)라고 한다.
+    - 반대의 과정을 일반화라고 한다.
+- sub-groupings
+    - 사람을 남자와 여자로 그룹핑하는 것
+    - sub-class
+- ISA
+    - "is a"관계를 의미함
+    - ISA관계를 sub-class라 함
+- sub-class를 만들면 속성을 상속받는다.
+    - Attribute inheritance
+
+- Example
+    - ![Specialization-Example](./img/Specialization-Example.png)
+    - Overlapping
+        - 두 Entity set 사이에 겹칠 수 있음을 의미한다.
+        - 위의 employee와 student는 겹치는 부분이 존재할 수 있다.
+        - 표현은 위와 같다.
+    - Disjoint
+        - 두 Entity set 사이에 겹치는 것이 없음을 의미한다.
+        - 위의 instructor와 secretary는 겹치는 것이 없다.
+        - 표현은 위와 같다.
+
+## Sub-Class를 만들기 위한 2가지 방법
+### 1. 상속할 대상의 Key와 추가할 속성을 저장
+![Make-Sub-Class-First-Solution](./img/Make-Sub-Class-First-Solution.png)
+
+- 상속 받을 내용에서 추가할 내용을 저장한다.    
+- 그리고 Key를 통해 속성을 받아 쓴다(join).    
+- 최소한의 속성만 저장함
+
+### 2. 상속 받은 것을 모두 저장
+![Make-Sub-Class-Second-Solution](./img/Make-Sub-Class-Second-Solution.png)
+
+- 상속받은 위의 속성들을 모두 다 저장한다.
+- 하지만 중복을 야기할 수 있음
+    - 정보 불일치(Inconsistancy)
+
+
+# Design Issues
+
+## ER Diagram을 그릴 때 주의사항
+1. 속성의 잘못된 사용
+    - ![Design-Issues-Ex1](./img/Design-Issues-Ex1.JPG)
+    - 위와 같이 student는 stud_dept의 관계를 통해 dept_name을 가져올 것이다.
+    - 하지만 먼저 dept_name을 작성하게 되면 이후 관계가 맺어지면 dept_name이 두 개 가 된다.
+    - 이는 잘못된 사용이다.
+2. relationship attributes 잘못된 사용
+    - ![Design-Issues-Ex2](./img/Design-Issues-Ex2.JPG)
+    - 위와 같이 속성 assignment와 marks의 속성으로 관계가 묶여있을 때
+    - 학생과 section이 assignment와 marks가 각각 1개일 경우는 그 값으로 잘 mapping이 된다.
+    - 하지만 그 이상일 경우는 mapping이 불가능하다.
+### relationship attributes 잘못된 사용을 수정
+![Design-Issues-Ex2-Solution](./img/Design-Issues-Ex2-Solution.png)
+- c와 같이 assignment를 Weak Entity로 빼내서 관계를 맺어줌
+- d와 같이 MultiValued로 처리함
+    - 하지만 이 경우 assignment의 처리가 곤란하다.
+    - assignment의 문제 정보를 따로 처리할 수 있는 것이 아니라, 각 학생에 대해서 그 과제를 정리해야 한다.
+
+## Modeling시 선택
+### Entities vs. Attributes
+모델링을 할 때 Entities를 할 수도 있고, Attributes를 선택할 수 있다.
+![Modeling-Entities-VS-Attributes](./imgModeling-Entities-VS-Attributes.png)
+
+- Entities
+    - 오른쪽 이미지처럼 따로 Entities를 만들어서 관리해 줄 수 있다.
+    - 이는 추가적인 속성을 만들 수 있다.
+    - 관계를 통해 다양한 관계를 맺어줄 수 있다.
+- Attributes
+    - 왼쪽 이미지처럼 하나의 속성으로 들어가서 관리할 수 있음
+
+### Entities vs. Relationship sets
+![Modeling-Entities-VS-Relationship-sets](./imgModeling-Entities-VS-Relationship-sets.png)
+- Relationship set을 따로 Entity로 만들어서 모델링을 하는 방식도 존재함
+
+### Binary Vs. Non-Binary Relationships
+Example: ternary relationship parents
+- ![Example-ternary-relationship-parents](./img/Example-ternary-relationship-parents.JPG)
+    - 왼쪽처럼 Binary로 연결할 수 있다.
+    - 오른쪽처럼 Ternary로 연결할 수 있다.
+    - 하지만 관리는 Binary가 더 용이할 수 있다.
+        - 상황에 따라 선택해서 Modeling
+
+# Alternative ER Notations
+![Alternative-ER-Notations](./img/Alternative-ER-Notations.png)
+- 타원은 속성을 의미함
+- ER을 표현하는데 다양한 방법들이 존재
+
+## UML
+UML(Unified Modeling Language) 
+- 프로그램 개발할 때 사용
+- ER Diagram과 유사함
+- 생략!
+
+# Other Aspects of Database Design
+- Functional Requirements
+- Data Flow, Workflow
+- Schema Evolution
+
+#
