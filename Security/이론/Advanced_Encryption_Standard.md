@@ -31,7 +31,7 @@
 5. 생성된 Key와 Plaintext를 XOR연산 수행한다.
     - 이를 Initial transformation이라 한다.
 6. 이를 통해 성성된 state를 가지고 각 Round를 수행한다.
-    - 각 Round에 필요한 Key는 [Key Expansion](#key-expansion)을 통해 생성한다.
+    - 각 Round에 필요한 Key는 [Key Expansion](#aes-key-expansion)을 통해 생성한다.
 
 
 ## Detailed Structure
@@ -103,7 +103,6 @@ S-box를 통해 문자 치환을 수행한다.
 - Key는 첫 번째 4개의 word들로 copy된다.
     - 이는 처음에 바로 사용한다.
     - Round 0 Key
-- 
 
 ### 과정
 ![AES-Key-Expansion](./img/AES-Key-Expansion.JPG)

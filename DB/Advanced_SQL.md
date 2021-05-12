@@ -334,3 +334,13 @@ Functions and Procedures를 구분을 잘 하지 않음
         else statement or compound statement
         end if
         ```
+- 예외
+    ```sql
+    declare out_of_classroom_seats  condition
+    declare exit handler for out_of_classroom_seats
+    begin
+    …
+    end
+    ```
+    - out_of_classroom_seats에서 에러가 발생했을 때
+        - begin ~ end절을 실행한다.
