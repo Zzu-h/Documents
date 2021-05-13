@@ -458,3 +458,57 @@ FUNC_NAME:
         sei(); // 전체 인터럽트 허가
     } 
     ```
+
+---
+
+# LCD
+## LCD 모듈 구조
+- 종류
+    - 문자 표시용
+        - 영문이나 숫자 + 특수 문자
+    - 그래픽 표시용
+        - 한글 등의 구현
+- LCD는 자체 컨트롤러가 있다.
+- 주요 pin 3개
+    - RS pin
+        - IR로 보낼지 DR로 보낼지 결정하는 pin
+    - RW pin
+        - Read를 할지 Write를 할지 결정하는 pin
+    - Enable pin
+        - 이 장치를 사용할지 안할지를 결정하는 pin
+- Data pin 8bit
+- 따라서 11개의 pin이 연결된다.
+![HD44780-Structure](./img/HD44780-Structure.JPG)
+
+### LCD 컨트롤러 기능 (HD44780)
+- Register 2개
+    - Instruction Register
+        - Display 명령어를 모두 처리함
+        - 표시데이터 RAM(DDRAM)의 위치 주소와 문자 발생기 RAM(CGRAM)의 위치를 지정하기 위한 주소 정보를 저장. 
+    - Data Register
+        - 실제 데이터를 가지고 있는 레지스터
+        - DR 레지스터에 데이터를 쓰면 LCD의 내부적인 동작에 의해서 IR에 의해 지정된 DDRAM 또는 CGRAM의 주소로 전
+        - DR 레지스터의 데이터를 읽으면, IR에 의해 지정된 DDRAM 또는 CGRAM의 주소 데이터가 마이크로컨트롤러로 전달. 
+- Memory 3개
+    - DDRAM
+    - CGRAM
+    - CGROM
+- Register select
+    - ![Register-Select](./img/Register-Select.JPG)
+- Busy Flag(BF)
+    - 연속적으로 LCD 모듈에 제어명령이 입력될 때 LCD모듈이 이 명령을 처리할 수 있는가를 나타내는 상태 표시 플래그
+    - BF = 0
+        - 이때, 다음 명령어를 실행할 수 있음
+- 주소 카운터
+    - 지정된 Character들이 각각의 주소를 가지고 있고 이를 지정함
+- 표시데이터 RAM
+    - DDRAM의 주소와 LCD 표시장치와의 관계
+        - ![LCD-DDRAM-Display-Relationship](./img/LCD-DDRAM-Display-Relationship.JPG)
+- 문자 발생기
+    - ROM(CGROM)
+        - 8bit 문바 패턴을 저장하고 있는 메모리
+    - RAM
+        - 사용자가 프로그램에 의해서 원하는 문자 패턴을 만들고자 할 때 사용하는 RAM영역
+
+## LCD 컨트롤러의 명령
+![LCD-Controller-Instruction](./img/LCD-Controller-Instruction.JPG)

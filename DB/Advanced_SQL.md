@@ -344,3 +344,169 @@ Functions and Procedures를 구분을 잘 하지 않음
     ```
     - out_of_classroom_seats에서 에러가 발생했을 때
         - begin ~ end절을 실행한다.
+
+## External Language Routines
+- 다른 언어로 함수 또는 프로시저를 만들어서 사용이 가능하다.
+    ```sql
+    create procedure dept_count_proc(in dept_name varchar(20),
+                                    out count integer)
+    language C
+    external name   '/usr/avi/bin/dept_count_proc'
+
+    create function dept_count(dept_name varchar(20))
+    returns integer
+    language C
+    external name '/usr/avi/bin/dept_count'
+    ```
+    - 위 프로시저는 /usr/avi/bin/dept_count_proc 경로에 있는 dept_count_proc파일을 실행한다.
+    - 위 함수는 /usr/avi/bin/dept_count 경로에 있는 dept_count파일을 실행한다.
+- 장점
+    - operation이 더 효율적이다.
+    - SQL만으로 표현이 안되는 것을 가능하게 함
+        - ex) 출력 등
+- 단점
+    - DB에서 데이터를 가져올 때 데이터 손상이 발생할 수 있다.
+    - 보안상에서 위험을 가지고 있다.
+        - ex) 데이터 유출사고
+- 따라서, 보안보다 효율성을 중시할 때 DB 내에서 수행한다.
+
+## Security with External Language Routines
+- 안전성 향상을 위한 두 가지 방법
+    - Sandbox
+        - 외부 언어로 function / procedure을 쓸 때,
+        - 별도의 메모리 공간을 만들어주고 그 공간에서 작업을 수행하며 결과만 돌려준다.
+    - Java와 같이 안전한 언어를 사용함
+        - C같은 경우 Pointer 등을 이용하면서 메모리 접근 자유도가 높다.
+        - 이는 안전성에 문제를 던질 수 있음
+- 위 방법 모두 성능상 Overhead가 존재함
+
+
+# Triggers
+- Trigger: DB에서 수정되었을 때 자동적으로 실행되는 문장
+- Trigger를 설계하기 위해서는 조건과 조건에 따른 동작을 정의해야 한다.
+
+## Triggering Events and Actions in SQL
+- Trigger를 발생시키는 조건은 3가지 이다.
+    - insert
+    - delete
+    - update
+    - 즉, DB가 수정되었을 때
+- data가 수정되기 전/후 둘 다 참조가 가능하다.
+    - 수정 전 data 참조
+        - `referencing old row as`
+    - 수정 후 data 참조
+        - `referencing new row as`
+- Trigger를 수정 전에 발생시킬 수 있고 수정 후에도 발생시킬 수 있다.
+    - `before update of takes`
+        - 수정 전에 발생
+    - `after update of takes`  
+        - 수정 후 발생
+
+## Statement Level Triggers
+- row Level Triggers와 대치된다.
+    - row level은 각 행마다 Trigger가 실행됨
+- Statement Level Triggers은 하나의 SQL문 마다 Trigger가 실행됨
+- for each row대신 for each statement을 사용하면 됨
+- 수정 전 Table과 수정 후 Table 둘 다 참조 가능
+
+## Trigger 사용 자제
+- Trigger를 자주 사용하면 여러 문제점이 있을 수 있음
+    - 따라서, 남발하지 말고 자제하는 것이 좋음
+- Trigger의 문제점
+    - Trigger가 의도치 않게 사용될 수 있다.
+        - 새로 insert 될 때만 Trigger를 설정해 두었을 때
+            - 문제가 발생해서 이전 backup 데이터를 로드하면 중복 Trigger가 발생
+        - 복사본이 실행될 때도 Trigger가 발생한다.
+            - 원본에 대한 Trigger이기 때문에 복사본에서는 발생해서는 안된다.
+    - 위 경우 Trigger를 중지시키고 실행해야 한다.
+    - Trigger가 잘못된 경우 중요한 transactions이 실패할 수 있다.
+- 다음의 경우에서 사용을 한다.
+    - data를 요약할 때
+        - 하지만 오늘날 materialized view를 제공함으로써 더 효율적인 관리가 가능
+    - 복사본을 생성할 때
+        - 이 또한 오늘날 DB가 제공하는 기능이 존재함
+- Trigger를 사용하는 대신 function 또는 procedure로 Encapsulation해서 사용하는 것이 좋음
+
+# Recursive Queries
+```sql
+with recursive rec_prereq(course_id, prereq_id) as (
+        select course_id, prereq_id
+        from prereq
+    union
+        select rec_prereq.course_id, prereq.prereq_id,
+        from rec_rereq, prereq
+        where rec_prereq.prereq_id = prereq.course_id
+    )
+select ∗
+from rec_prereq;
+```
+
+## The Power of Recursion
+- iteration
+    - findAllPrereqs 예제는 iteration을 통해 만든 것 참고
+    - iteration을 사용해서 연속적으로 rec_prereq를 추가함
+    - 더이상 추가하지 않는 시점을 fixed point라고 한다.
+- Recursive views들은 단순 증가(monotonic)하는 성격을 가져야 한다.
+
+# Advanced Aggregation Features
+
+## Ranking
+- order by를 통해 순위를 메김
+- Example
+    ```sql
+    select ID, rank() over (order by GPA desc) as s_rank
+    from student_grades
+    order by s_rank
+    ```
+- 일반적으로 순위 메기는 기준에서 같은 값을 가지면 같은 등수를 부여한다.
+- dense_rank를 이용하면 같은 등수를 부여하는 것이 아닌 세밀하게 부여를 한다.
+- subquery를 통해서도 가능은하나 비효율적이다.
+- Ranking을 할 때 data를 분할할 수 있다.
+    - Example
+        ```sql
+        select ID, dept_name,
+            rank () over (partition by dept_name order by GPA desc) 
+                    as dept_rank
+        from dept_grades
+        order by dept_name, dept_rank;
+        ```
+        - 과별로 나눈 다음 성적순으로 정렬 후 각 과마다 ranking을 메긴다.
+- Rank절은 단일 select 절에서 발생할 수 있다.
+- 또한 gruop by를 통해서도 가능하다.
+- limit을 사용해서 tuple 갯수를 제한할 수 있다.
+    ```sql
+    select ID, GPA
+    from student_grades
+    order by GPA desc
+    limit 10;
+    ```
+- null을 처음에 넣을지 나중에 넣을지 선택할 수 있음
+- ntile()함수를 이용해서 등분할 수 있음
+    ```sql
+    select ID, ntile(4) over (order by GPA desc) as quartile
+        from student_grades;
+    ```
+    - 위는 총 4등분을 하여 출력
+
+## Windowing
+- random한 변수들을 부드럽게 만들기 위함
+- Example
+    ```sql
+    select date, sum(value) over 
+        (order by date between rows 1 preceding and 1 following)
+    from sales
+    ```
+    - 평균을 내면서 불규칙한 값들을 부드럽게 만듦
+- partition이 가능함
+    - Exmaple
+        ```sql
+        select account_number, date_time,
+        sum (value) over
+                (partition by account_number 
+                order by date_time
+                rows unbounded preceding)
+            as balance
+        from transaction
+        order by account_number, date_time
+        ```
+        - 
