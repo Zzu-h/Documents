@@ -1,0 +1,6 @@
+﻿  1377_main.cpp
+C:\Users\juho7\Desktop\git모음\BOJ\BOJ\1377_main.cpp(38,26): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\juho7\Desktop\git모음\BOJ\BOJ\1377_main.cpp(52,26): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\juho7\Desktop\git모음\BOJ\BOJ\1377_main.cpp(63,35): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\juho7\Desktop\git모음\BOJ\BOJ\1377_main.cpp(81,26): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  BOJ.vcxproj -> C:\Users\juho7\Desktop\git모음\BOJ\Debug\`.exe
