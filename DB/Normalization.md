@@ -89,7 +89,7 @@
     - α ⊂ K, α → R을 만족하는 α가 존재하지 않을 때 K를 candidate key가 된다.
         - α: subset
 - functional dependency는 superkey를 사용해서 표현할 수 없는 제약조건을 표현할 수 있다.
-    - in_dep (<u>ID</u>, name, salary, dept_name, building, budget).
+    - in_dept (<u>ID</u>, name, salary, dept_name, building, budget).
     - 여기서, ID는 모든 값들을 결정할 수 있다.
         - ID → building
     - 또한 dept_name을 통해서 , building을 결정할 수 있다.
@@ -112,3 +112,70 @@
         - name → name
 
 ## Lossless Decomposition
+- Form
+    - `∏_R1 (r) ⨝ ∏_R2 (r) = r`
+- 다음 두 조건 중 하나라도 만족하한다면 Lossless Decomposition이다.
+    - `R1 ∩ R2 → R1`
+    - `R1 ∩ R2 → R2`
+    - 결국 적어도 둘 중 하나에서 key가 되면 된다.
+
+
+## Dependency Preservation
+- DB가 수정되었을 때 제약조건이 잘 맞는지 Testing 해야 한다. 
+- 그 Testing은 효율적으로 해야 한다.
+    - 하나의 테이블 안에서 할 때 효율적이라고 함
+    - 이 때, Dependency Preservation를 만족한다.
+- 비효율적
+    - 여러 테이블을 하게 될 대는 Cartesian Product를 수행하고 Testing한다.
+    - 이는 Dependency Preservation를 만족하지 못한다.
+    - functional dependency가 분리된다면 결합해야 하기 때문에 비효율적
+
+
+# Normal Forms
+## First Normal Form (1NF)
+- Domain이 atomic하다.
+    - 각 element들이 더 이상 나누어지지 않음
+    - 이름이 중복되거나 속성이 분리될 수 있다면  atomic하지 않다.
+- First Normal Form (1NF)
+    - 어떤 테이블이 모든 속성의 Domain이 atomic하다면 1NF라 한다.
+- 1NF에 atomic하지 않은 데이터를 저장할 경우
+    - 저장장치가 복잡해지고, 질의도 모두 바뀌게 된다.
+- 따라서, 우리는 모든 테이블이 1NF를 따른다고 가정을 한다.
+
+## Beyce-Codd Normal Form (BCNF)
+- 3NF와 4NF 사이에 존재하는 계층
+- 어떤 테이블 R이 Functional Dependency를 많이 가질 때를 말함
+- BCNF는 다음 두 가지 중 적어도 하나를 만족해야 한다.
+    - α → β가 trivial할 때
+        - 즉, β⊆α를 만족할 때
+    - α가 R의 superkey일 때
+- Example
+    - 위 in_dept Talbe을 보면
+        - in_dep (<u>ID</u>, name, salary, dept_name, building, budget).
+    - BCNF가 아니다.
+        - dept_name이 building과 budget를 결정하긴 한다.
+        - 하지만 superkey가 아니다.
+
+### BCNF로 나누기
+- BCNF를 만족하지 않는 테이블 R과
+    - BCNF를 위반하는 Functional Dependency를 α → β라 하자.
+- α와 β를 모두 합친다
+    - α ∪ β
+- 또 전체 R에서 (β - α)를 뺀다
+    - R - (β - α)
+    - α와 β가 겹치는게 없다면 R - β로 해도 무방
+- Example
+    - α = dept_name
+    - β = building, budget
+    - α ∪ β = (dept_name, building, budget)
+    - R - (β - α) - (ID, name, dept_name, salary)
+
+### BCNF and Dependency Preservation
+- BCNF에서 Dependency가 보존이 안될 경우
+    - dept_advisor(s_ID, i_ID, dept_name)
+       - 이는 데이터 중복으로 인해서 나눌 필요가 있다.
+    - Function dependency
+        - i_ID → dept_name
+        - s_id, dept_name → i_ID
+    - 하지만 모든 속성이 다 연관이 있다보니 어떻게든 나누어도 손실이 발생함
+        - Dependency가 보존되지 못함
