@@ -596,3 +596,37 @@ FUNC_NAME:
     - MHz 클럭을 사용하는 경우 그 클럭의 주기는 250ns
     - 이 클럭으로 256까지 센다고 해도 64us 이하를 세는 카운터 밖에는 만들 수가 없음.
 - 10비트, 프리스케일러 보유(최대 2^10 = 1024배 가능)
+
+## counter mode
+- Normal mode
+    - TCNT 카운터를 사용
+        - 최대 255까지 up count를 한다.
+        - n ~ 255
+        - max 위치에서 overflow interrupt 발생시킨다.
+    - TCCRn 레지스터의 WGMn1:n0 를 00으로 설정해야 Normal mode로 사용이 가능함
+- CTC mode
+    - OCRn 카운터 사용
+        - 0 ~ n
+    - compare 기능 수행
+        - OCRn와 TCNT의 값을 비교한다.
+        - 만일 같다면 interrupt 발생시킨다.
+    - OCn 단자를 이용하여 출력파형 발생 가능함
+        - TCCRn 레지스터의 COMn1 ~ n0를 01로 설정해야 함
+- Fast PWM mode
+    - 0에서 255까지 세는 동안 두 번의 인터럽트 발생 가능
+    - 카운터는 업 카운터로서만 동작
+        - TCNT 값이 증가하여, OCR 값과 일치하면 출력 비교 인터럽트 발생
+        - MAX 에서 overflow interrupt 발생
+        - OCRN 값을 바꾸면 그 다음 카운터 주기를 원하는 대로 변경 가능
+    - 
+- PCPWM mode(Phase Correct Pulse Width Modulation)
+    - Fast PWM mode와 유사함
+    - Up count와 Down count가 번갈아 일어난다.
+    - PWM 주기를 변경하기위해 OCRn 레지스터에 새로운 값을 기록하더라도 TCNT가 255를 찍고 난 후에 변경된다.
+
+---
+
+# 타이머와 PWM
+## PWM(펄스폭변조)
+- 펄스 폭을 전송하고자 하는 신호에 따라 변화시키는 변조 방식
+- 모터 제어나 전압제어 등 많이 사용함

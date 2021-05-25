@@ -179,3 +179,11 @@
         - s_id, dept_name → i_ID
     - 하지만 모든 속성이 다 연관이 있다보니 어떻게든 나누어도 손실이 발생함
         - Dependency가 보존되지 못함
+
+## Third Normal From
+- BCNF이면 3NF이다.
+- 다음 조건 중 하나라도 만족해야 한다.
+    - α → β가 trivial할 때
+    - α가 R의 superkey일 때
+        - 위 두개는 BCNF의 조건이다.
+    - 
