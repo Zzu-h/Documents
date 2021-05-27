@@ -182,8 +182,103 @@
 
 ## Third Normal From
 - BCNF이면 3NF이다.
-- 다음 조건 중 하나라도 만족해야 한다.
+- 모든 α → β in F^+에 대해서 다음 조건 중 하나라도 만족해야 한다.
     - α → β가 trivial할 때
     - α가 R의 superkey일 때
         - 위 두개는 BCNF의 조건이다.
-    - 
+    - β - α 가 R에 대해 후보키일 경우
+- Dependency 보존을 위해 BCNF를 약간 완화한 것
+
+### Redundancy in 3NF
+![Redundancy in 3NF](./img/Redundancy-in-3NF.png)
+- 위 표에서 잘못된 점
+    - null값이 입력됨
+    - 데이터 중복이 존재
+- 따라서, 다음을 나누어야 한다.
+    - R = (J, K, L )
+    - F = {JK → L, L → K }
+
+### 3NF Decomposition Algorithm
+- 3NF가 아닐 경우 3NF로 만드는 알고리즘
+```py
+i := 0;
+for each  functional dependency  α → β in F do
+	if none of the schemas Rj, 1 ≤ j ≤ i contains   α β
+    		then begin
+            	i := i  + 1;
+                Ri  := α β
+            end
+if none of the schemas Rj, 1 ≤ j  ≤ i contains a candidate key for R
+	then begin
+    	i := i  + 1;
+		Ri := any candidate key for R;
+	end
+/* Optionally, remove redundant relations */
+repeat
+if any schema Rj is contained in another schema Rk
+    then /* delete Rj  */
+       Rj = R;;
+       i=i-1;
+return (R1, R2, ..., Ri)
+```
+
+- Exmpale: cust_banker_branch = (<u>customer_id</u>, <u>employee_id</u>, branch_name, type )
+    - Functional dependency를 확인
+        1. customer_id, employee_id → type
+        2. employee_id → branch_name
+        3. customer_id, branch_name → employee_id
+    - Candidate key
+    - BCNF인가?
+        - BCNF가 아니다.
+        - 1번과 2번을 잡으면 3번이 Dependency를 만족하지 못한다.
+        - 따라서, 3NF로 가야함
+    - 3NF 알고리즘 적용
+        - 
+
+### Comparison of BCNF and 3NF
+- 3nf
+    - NULL value와 중복은 존재 가능
+    - dpendency를 보존해준다.
+- BCNF
+    - 중복을 막아준다.
+
+## Goals of Normalization
+- R과 F가 주어질 때 이 R이 좋은 R인지 판단
+    - BCNF, 3NF 를 판단
+    - ![Is-Good-Relation](./img/Is-Good-Relation.JPG)
+
+
+##  Multivalued Dependency
+- 하나의 값에 대해 여러 값을 매칭할 때
+- Form
+    - α →→ β
+![4NF-Multivalued-Dependency](./img/4NF-Multivalued-Dependency.JPG)
+
+- Example
+    - 다음과 같이 존재할 때
+        - (99999, David,   981-992-3443)
+        - (99999, William, 981-992-3443)
+    - ID →→ child_name
+    - ID →→ phone_number
+
+# Overall Database Design Process
+- 모든 속성을 가지는 Relation R을 만들고 Functional Dependency에 따라 분리시킨다.
+- 또는 적당히 임의의 R을 만들고 정규화를 수행한다.
+- 
+## ER Model and Normalization
+- ER을 잘 설계하고 table 전환이 잘 된다면 추가적인 정규화는 필요없다.
+- 하지만 실제로는 설계가 완벽하지 않기 때문에 정규화가 필요함
+
+## Denormalization for Performance
+- 필요에 의해(성능) 정규화를 하지 않을 수 있다.
+- 2가지 대안이 존재하는데 prereqs를 예로 보자.
+    - 정규화되기 전 테이블 사용
+        - Data 중복이 들어갈 수 있음
+        - 더 빠른 조회 가능
+        - 추가적인 공간과 수정 시간이 더 듦
+        - 추가적인 coding이 존재하며 error의 가능성이 늘어남
+    - materialized view를 만들기: course ⨝ prereq
+        - 더 빠른 조회 가능
+        - 추가적인 공간과 수정 시간이 더 듦
+        - 추가적인 coding이 없고 error를 방지할 수 있음
+            - 수정에 대해 DB가 관리해줌
