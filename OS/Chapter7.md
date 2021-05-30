@@ -165,7 +165,46 @@ do{
 Dining-Philosophers Problem의 solution 중 하나 Monitor를 이용한 해결책
 code
 <!-- 강의자료 올려주시면 코드 복붙 -->
+- 알고리즘
+    ```c
+    monitor DP {
+        enum { THINKING; HUNGRY, EATING) state [5] ;
+        condition self [5];
 
+        void pickup (int i) { 
+            state[i] = HUNGRY;
+        test(i);
+        if (state[i] != EATING) self [i].wait;
+        }
+
+        void putdown (int i) { 
+            state[i] = THINKING;
+                // test left and right neighbors
+            test((i + 4) % 5);
+            test((i + 1) % 5);
+        }
+
+        void test (int i) { 
+            if ( (state[(i + 4) % 5] != EATING) &&
+                (state[i] == HUNGRY) &&
+                (state[(i + 1) % 5] != EATING) ) { 
+                    state[i] = EATING ;
+                        self[i].signal () ;
+            }
+        }
+
+        initialization_code() { 
+            for (int i = 0; i < 5; i++)
+                state[i] = THINKING;
+        }
+    }
+    ```
+- 사용 예시
+    ```c
+    dp.pickup (i)
+    EAT
+    dp.putdown (i)
+    ```
 
 # Synchronization Examples
 ## Windows Synchronization

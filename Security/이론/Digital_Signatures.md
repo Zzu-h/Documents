@@ -70,5 +70,14 @@
     - 계산 과정이 위와 반대
         1. computes 𝛾′ = 𝛼^𝑦*𝑣^𝑟 (𝑚𝑜𝑑 𝑝)
         2. verifies 𝑟 = 𝐻(𝑀||𝛾′)
-# DSA and ECDSA
+# DSA to ECDSA
+![DSA-to-ECDSA](./img/DSA-to-ECDSA.JPG)
+
 # RSA-PSS
+- 같은 메시지를 Hash function에 넣더라도 randomize하게 나오게 함
+![RSA-PSS-Encoding](./img/RSA-PSS-Encoding.JPG)
+
+- padding: 상수
+- salt값이 바뀌면서 randomize함
+
+![RSA-PSS-EM-Verification](./img/RSA-PSS-EM-Verification.JPG)
