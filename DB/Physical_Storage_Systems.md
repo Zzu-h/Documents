@@ -196,3 +196,138 @@
     - 더 넓은 용량과 더 빠른 속도를 제공
     - 더 높은 신뢰성 제공
         - 병렬 처리라 하나가 고장나면 그 부분만 고치면 됨
+
+## Improvement of Reliability via Redundancy
+- 중복을 통해서 신뢰성 향상시키기
+- Mirroring (= shadowing)
+    - 어느 한 Disk의 Data를 다른 Disk에 복사를 해두는 것
+        - 즉 두 Disk를 사용
+    - Data 손실
+        - 하나를 사용하다 고장이 났을 경우 또, mirror disk를 통해서 복구되기 전에 실패가 된다면 data 손실 발생
+        - 확률이 매우 적음
+            - 화재나 붕괴, 정전 등과같은 재해로 확률이 존재
+- Mean time to data loss
+    - 데이터 손실의 평균 시간 계산
+        - 만일 MTTF가 100,000h라 하자
+            - 그렇다면 50,000h에 고장이 발생
+        - 또한 MTTR이 10h라 하자
+            - MTTR: 평균 수리 시간
+        - MTDL = 50,000 * (100,000/10) = 500 * 10^6h
+
+
+## Improvement in Performance via Parallelism
+- 병렬처리를 통해 성능 향상시키기
+- 데이터의 양이 적을 경우 분산시켜서 정리한다.
+- 데이터의 양이 클 경우 데이터를 나누어서 분산시킨다.
+- Bit-level striping
+    - 하나의 데이터를, 차례대로 비트 단위로 나누어서 Disk에 저장한다.
+        - 읽을 때 여러 disk를 한 번에 읽는다.
+    - 하지만 seek/access에 매우 비효율적이다.
+- Block-level striping
+    - block 단위로 나누어서 차례대로 Disk에 하나씩 저장한다.
+
+# RAID
+
+## RAID Levels
+
+### RAID Level 0 & 1
+![RAID-Levels](./img/RAID-Levels.png)
+
+- RAID Level 0
+    - Block striping
+    - Copy는 하지 않는다.
+        - 중복이 없다.
+    - 속도는 빠르나 신뢰성이 저하
+    - Data 손실이 되어도 괜찮은 곳에 사용됨
+        - e.g. data analysis
+- RAID Level 1
+    - Mirror disk 사용
+    - 쓰기 성능이 좋다.
+        - 주의: level 0보다 좋은 것이 아님, 그 이후 단계보다 좋다는 의미
+        - 읽기 성능은 비슷...
+    - log file과 같이 기록 용도에 많이 사용됨
+
+### RAID Level 5
+- Parity blocks
+    - Even parity 생성
+    - Data의 block 단위로 XOR 연산을 통해서 parity block을 생성한다.
+    - disk에 저장된 Data가 날라가면 parity를 통해서 해당 손실된 Data를 복구할 수 있다.
+        - 1개의 disk 복구 용도
+    - Data를 수정할 때 parity도 같이 수정
+        - 2개의 block을 읽고 2개의 blcok을 쓰는 작업 소요
+        - 쓰는 성능이 저하
+- RAID Level 5
+    - ![RAID-Level-5](./img/RAID-Level-5.png)
+    - disk 하나를 추가해서 parity를 분산해서 저장한다.
+    - 분산을 통해 병목현상을 막아준다.
+    - Disk 효율 상승
+    - 쓰기와 수정 성능 저하
+    - data를 수정할 때 다른 disk도 동시에 사용 가능
+### RAID Level 6
+- RAID Level 6
+    - prarity에 Q를 추가한다.
+        - error를 복구하기 위한 block P, Q가 된다.
+        - 2 Disk error에 대처 가능
+    - Disk HW를 더 많이 사용하지만 신뢰성을 확보함
+### Other RAID Level
+- 기타 level(현재 사용 안함)
+    - RAID Level 2
+        - bit striping.
+    - RAID Level 3
+        - Bit-Interleaved Parity
+    - RAID Level 4
+        - Parity를 하나로 묶어서 하나의 disk에 저장하는데 성능이 매우 떨어짐
+## Choice of RAID Level
+- 다음의 요소로 판별
+    - Monetary cost
+    - Performance
+    - Performance during failure
+    - Performance during rebuild
+- Level 0
+    - Data가 분실되어도 괜찮을 때 사용
+    - Data 보호가 안됨
+- Level 1
+    - 쓰기 작업이 많이 필요할 때
+        - 수정 작업이 많을 때
+    - 더 많은 공간 소비가 필요함
+- Level 5
+    - 큰 데이터를 연속적으로 저장할 때 사용
+    - 저장용량이 많이 필요할 때 사용
+- Level 6
+    - Data의 보존이 필요할 때
+    - Data 신뢰성이 좋음
+    - 잠복된 error를 방지하기 위해 사용
+
+# Hardware Issues
+- Software RAID
+    - SW적으로 RAID를 구현
+- Hardware RAID
+    - 회로를 추가하는 것 뿐만 아니라
+    - HW를 추가함으로써 성능을 향상시킬 수 있음
+- Latent failures
+    - 잠복된 에러
+    - 쓰기는 잘 되었지만 에러가 발생할 수 있음
+    - disk 하나가 고장이 나면 data 손실을 야기한다.
+        - Level 6로 막음
+- Data scrubbing
+    - 평소에 Data를 스캔해서 잠복된 에러를 찾는다.
+- Hot swapping
+    - Disk가 여러 개 존재할 때 하나가 에러가 나면 교체를 해야한다.
+        - 전원을 끄지 않고 RAID를 운영하며 Disk를 교체하는 것
+- 많은 시스템에서는 여분의 disk를 가지고 있다가 고장이 날 경우 즉시 교체한다.
+- 배터리에 따라서 backup
+
+## Optimization of Disk-Block Access
+- Buffering
+    - 메모리에서 버퍼를 사용
+- Read-ahead
+    - 다음 사용할 블럭을 버퍼에 미리 두고 사용할 준비
+- Disk-arm-scheduling 
+    - arm이 불규칙적이게 움직이는 것을 방지
+    - elevator algorithm
+        - 순차적으로 arm이 움직일 수 있도록 하는 것
+- File organization
+    - block들을 최대한 연속적으로 할당한다.
+    - extents
+        - 연속된 block
+    - fragment
