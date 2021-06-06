@@ -2,7 +2,7 @@
 - 비정상일 때 고치는 방법
 # Normalization
 - 잘못된 Table
-    - ![Normalization-Incorrect-Table](./img/Normalization-Incorrect-Table.JPG)
+    - ![Normalization-Incorrect-Table](./img/Normalization-Incorrect-Table.jpg)
     - 위 테이블은 instructor와 department table을 natural join한 것이다.
         - 만일 위 테이블이 하나의 테이블이라고 가정해보자.
     - 위에서 department table의 데이터들이 중복해서 출력되는 것을 확인할 수 있다.
@@ -26,7 +26,7 @@
 - Lossy Decomposition
     - 기존 테이블에서 나누고 그 테이블들을 하나로 다시 묶었을 때
     - 원본을 유지하지 않을 때를 Lossy Decomposition라 한다.
-    - ![Table-Lossy-Decomposition](./img/Table-Lossy-Decomposition.JPG)
+    - ![Table-Lossy-Decomposition](./img/Table-Lossy-Decomposition.jpg)
         - 위 테이블에서 Kim이라는 이름으로 2개의 정보가 나와야 하지만 4개가 나오게 됨
     - Form
         - `r ⊂ ∏_R1 (r) ⨝ ∏_R2 (r)`
