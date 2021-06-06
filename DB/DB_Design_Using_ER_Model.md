@@ -343,7 +343,7 @@ many-to-many relationship에서는 별도의 Table을 생성한다.
 ## Modeling시 선택
 ### Entities vs. Attributes
 모델링을 할 때 Entities를 할 수도 있고, Attributes를 선택할 수 있다.
-![Modeling-Entities-VS-Attributes](./imgModeling-Entities-VS-Attributes.png)
+![Modeling-Entities-VS-Attributes](./img/Modeling-Entities-VS-Attributes.png)
 
 - Entities
     - 오른쪽 이미지처럼 따로 Entities를 만들어서 관리해 줄 수 있다.
@@ -353,7 +353,7 @@ many-to-many relationship에서는 별도의 Table을 생성한다.
     - 왼쪽 이미지처럼 하나의 속성으로 들어가서 관리할 수 있음
 
 ### Entities vs. Relationship sets
-![Modeling-Entities-VS-Relationship-sets](./imgModeling-Entities-VS-Relationship-sets.png)
+![Modeling-Entities-VS-Relationship-sets](./img/Modeling-Entities-VS-Relationship-sets.png)
 - Relationship set을 따로 Entity로 만들어서 모델링을 하는 방식도 존재함
 
 ### Binary Vs. Non-Binary Relationships
@@ -379,5 +379,3 @@ UML(Unified Modeling Language)
 - Functional Requirements
 - Data Flow, Workflow
 - Schema Evolution
-
-#
