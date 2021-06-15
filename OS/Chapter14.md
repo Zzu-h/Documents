@@ -61,7 +61,7 @@ Disk는 다음에 정보들을 저장한다.
     - Per-process open table
         - system-wide open table의 FCB에 대한 Pointer를 가짐
         - 프로세스마다 따로 존재
-[Operating-structure-of-a-file-system-implementation](./img/Operating-structure-of-a-file-system-implementation.JPG)
+![Operating-structure-of-a-file-system-implementation](./img/Operating-structure-of-a-file-system-implementation.JPG)
 ### 만일 file이 open 되었다면
 system-wide open table를 check한다.
 - 다른 프로세스가 open했는가를 확인
@@ -71,7 +71,7 @@ system-wide open table를 check한다.
 
 ### 만일 file이 read or written 된다면
 1. per-process open-file table을 찾는다.
-    - system-wide open file table에 link가 되어있으므로 offset같은 정보를 차증ㅁ
+    - system-wide open file table에 link가 되어있으므로 offset같은 정보를 찾음
 2. system-wide open-file table을 찾는다.
     - FCB를 찾아서 read, write를 수행
 

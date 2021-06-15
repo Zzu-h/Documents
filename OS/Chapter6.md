@@ -1,7 +1,7 @@
 # Process synchronization
 프로세스들은 독립적으로 따로 일을 한다고 가정하고 Ch5까지 진행해 왔다.    
 하지만 실제로는 Process들이 서로간에 간섭, 상관있는 경우가 대다수이다.    
-그들간에 Communication, Process synchronization을 이 Chpater에서 다룬다.
+그들간에 Communication, Process synchronization을 이 Chapter에서 다룬다.
 
 ## 왜 Process synchronization가 필요한가
 - 공유 자원에 데이터를 Update할 때 문제가 발생함

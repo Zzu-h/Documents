@@ -40,7 +40,6 @@
         1. OS는 PCB를 확인함.
             - 만일 에러가 발생한다면 다음을 수행함
         2. empty frame을 찾는다.
-            - 
         3. empty frame이 존재한다면 해당되는 page를 empty frame으로 만든 다음에 copy를 한다.
             - copy: disk access
         4. page table update

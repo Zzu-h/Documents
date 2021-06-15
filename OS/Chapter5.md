@@ -14,7 +14,6 @@ CPU를 누가 언제 어떻게 쓸것인지 정해야 함
 이때 사용하는 알고리즘이 Scheduling algorithm이다
 
 
-
 # Concepts of Scheduling
 Process의 성질
 - 일반적으로 Process는 CPU를 사용해야 실행이 된다.
@@ -322,7 +321,7 @@ Kernel이 인식하는 것은 Process이지 Thread가 아니다.
         - User
 
 ## Scheduling of Conventional processes
-- 모든 Conventional processessms 자기 고유의 static priority를 가진다.
+- 모든 Conventional processes는 자기 고유의 static priority를 가진다.
     - 그 priority의 범위는 100(우선순위 높음)~139(우선순위 낮음)이다.
         - nice value를 통해 process의 우선순위를 바꿀 수 있음
             - nice는 -20 ~ +19를 가짐
