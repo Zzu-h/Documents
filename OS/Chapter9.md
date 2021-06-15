@@ -175,7 +175,7 @@
     - page offset은 하위 n bit이며
     - page number은 상위 m-n bit이다.
 - Address translation
-    - ![Paging-Hardware-Address-translation](./imPaging-Hardware-Address-translation.JPG)
+    - ![Paging-Hardware-Address-translation](./img/Paging-Hardware-Address-translation.JPG)
     1. d는 그대로 이동
     2. p는 page table을 통해 f 로 변환
     3. f+d를 통해 Physical address로 변환
